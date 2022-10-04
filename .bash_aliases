@@ -1,0 +1,20 @@
+alias cdcode='cd /mnt/d/code'
+alias ..='cd ../'
+alias ...='cd ../../../'
+alias ....='cd ../../../../'
+alias up='sudo apt update; sudo apt upgrade'
+alias ealias='vim ~/.bash_aliases'
+alias startrdp='sudo /etc/init.d/xrdp start; mstsc.exe /v:localhost:3390'
+alias stoprdp=' sudo /etc/init.d/xrdp stop'
+alias ralias='source ~/.bashrc'
+alias ra='source ~/.bashrc'
+alias rdpshow='showrdp'
+alias rdpstart='startrdp'
+alias rdpstop='stoprdp'
+alias showrdp='mstsc.exe /v:localhost:3390'
+alias startrdp='sudo /etc/init.d/xrdp start'
+alias stoprdp='sudo /etc/init.d/xrdp stop'
+alias gitsh="'/mnt/c/Program Files/Git/bin/bash.exe' -i -l"
+alias explorer='explorer.exe .'
+alias ll="ls -l --time-style=long-iso"
+alias lsh="ls -A -I'*'"
