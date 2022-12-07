@@ -18,3 +18,5 @@ alias gitsh="'/mnt/c/Program Files/Git/bin/bash.exe' -i -l"
 alias explorer='explorer.exe .'
 alias ll="ls -l --time-style=long-iso"
 alias lsh="ls -A -I'*'"
+alias pyenv="source .venv/bin/activate"
+alias httpserv="sudo python3 -m http.server"
