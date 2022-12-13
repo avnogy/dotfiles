@@ -31,7 +31,10 @@ filetype plugin indent on    " required
 set wrap
 syntax enable
 colorscheme ron
-
+set noswapfile
+set hlsearch
+set ignorecase
+set incsearch
 
 " Start NERDTree. If a file is specified, move the cursor to its window.
 autocmd StdinReadPre * let s:std_in=1
