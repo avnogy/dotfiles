@@ -86,7 +86,7 @@ fi
 
 #choose display for x server
 if [[ $(grep -i Microsoft /proc/version) ]]; then
-echo "Starting x server WSL detected"
+echo "WSL detected - Starting X Server" 
 export DISPLAY=$(route.exe print | grep 0.0.0.0 | head -1 | awk '{print $4}'):0.0
 fi
 
