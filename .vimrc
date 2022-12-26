@@ -59,6 +59,9 @@ set hlsearch
 set ignorecase
 set smartcase
 set clipboard=unnamedplus
+set foldmethod=indent
+set foldnestmax=3
+
 syntax enable
 
 vnoremap > >gv
