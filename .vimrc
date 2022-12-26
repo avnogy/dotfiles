@@ -26,6 +26,7 @@ Plug 'sainnhe/sonokai'
 Plug 'jiangmiao/auto-pairs'
 Plug 'tomtom/tcomment_vim'
 Plug 'ap/vim-css-color'
+Plug 'mbbill/undotree'
 
 "Plugin 'ayu-theme/ayu-vim' 
 "Plugin 'vim-airline/vim-airline-themes'
@@ -62,6 +63,8 @@ syntax enable
 
 vnoremap > >gv
 vnoremap < <gv
+
+nnoremap <leader>u :UndotreeToggle<CR>
 
 " toggle NERDTree
 nnoremap <silent> <expr> <C-N> g:NERDTree.IsOpen() ? "\:NERDTreeClose<CR>" : bufexists(expand('%')) ? "\:NERDTreeFind<CR>" : "\:NERDTree<CR>"
