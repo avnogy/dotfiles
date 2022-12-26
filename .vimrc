@@ -35,9 +35,25 @@ filetype plugin indent on    " required
 " see :h vundle for more details or wiki for FAQ
 " Put your non-Plugin stuff after this line
 
+
+ """Important!!
+if has('termguicolors')
+  set termguicolors
+endif
+"atlantis, default, shusia, maia, amdromeda
+let g:sonokai_style = 'atlantis'
+let g:sonokai_better_performance = 1
+
+colorscheme sonokai
+
+let g:airline_theme = 'sonokai'
+
+"set termguicolors     " enable true colors support
+"let ayucolor="mirage"   "light, mirage, dark
+"colorscheme ayu
+"let g:airline_theme='hybrid'
+
 set wrap
-syntax enable
-colorscheme ron
 set noswapfile
 set hlsearch
 set ignorecase
