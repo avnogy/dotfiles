@@ -25,6 +25,7 @@ Plug 'vim-airline/vim-airline'
 Plug 'sainnhe/sonokai' 
 Plug 'jiangmiao/auto-pairs'
 Plug 'tomtom/tcomment_vim'
+Plug 'ap/vim-css-color'
 
 "Plugin 'ayu-theme/ayu-vim' 
 "Plugin 'vim-airline/vim-airline-themes'
@@ -62,7 +63,7 @@ syntax enable
 vnoremap > >gv
 vnoremap < <gv
 
-"toggle NERDTree
+" toggle NERDTree
 nnoremap <silent> <expr> <C-N> g:NERDTree.IsOpen() ? "\:NERDTreeClose<CR>" : bufexists(expand('%')) ? "\:NERDTreeFind<CR>" : "\:NERDTree<CR>"
 " Start NERDTree. If a file is specified, move the cursor to its window.
 autocmd StdinReadPre * let s:std_in=1
