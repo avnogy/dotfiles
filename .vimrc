@@ -57,7 +57,7 @@ set wrap
 set noswapfile
 set hlsearch
 set ignorecase
-set incsearch
+set smartcase
 set clipboard=unnamedplus
 syntax enable
 
