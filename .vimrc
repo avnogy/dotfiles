@@ -12,8 +12,15 @@ call vundle#begin()
 Plugin 'VundleVim/Vundle.vim'
 Plugin 'preservim/nerdtree'
 Plugin 'vim-airline/vim-airline'
+Plugin 'sainnhe/sonokai' 
+Plugin 'jiangmiao/auto-pairs'
+Plugin 'tomtom/tcomment_vim'
 
-" All of your Plugins must be added before the following line
+"Plugin 'ayu-theme/ayu-vim' 
+"Plugin 'vim-airline/vim-airline-themes'
+" Plugin 'preservim/nerdcommenter'
+
+"All of your Plugins must be added before the following line
 call vundle#end()            " required
 filetype plugin indent on    " required
 " To ignore plugin indent changes, instead use:
