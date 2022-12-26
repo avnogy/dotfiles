@@ -84,9 +84,8 @@ if [ -x /usr/bin/dircolors ]; then
     alias egrep='egrep --color=auto'
 fi
 
-#choose display for x server
+#choose display for x server if wsl detected
 if [[ $(grep -i Microsoft /proc/version) ]]; then
-echo "WSL detected - Starting X Server" 
 export DISPLAY=$(route.exe print | grep 0.0.0.0 | head -1 | awk '{print $4}'):0.0
 fi
 
