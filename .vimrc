@@ -36,6 +36,10 @@ Plug 'mbbill/undotree'
 " - Automatically executes `filetype plugin indent on` and `syntax enable`.
 call plug#end()
 
+
+:noremap Q !!$SHELL<CR>
+
+
  """Important!!
 if has('termguicolors')
   set termguicolors
