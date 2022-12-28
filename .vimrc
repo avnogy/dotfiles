@@ -41,8 +41,8 @@ call plug#end()
 
 augroup remember_folds
   autocmd!
-  autocmd BufWinLeave * mkview
-  autocmd BufWinEnter * silent! loadview
+  au BufWinLeave ?* mkview 1
+  au BufWinEnter ?* silent! loadview 1
 augroup END
 
  """Important!!
