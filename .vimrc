@@ -39,6 +39,11 @@ call plug#end()
 
 :noremap Q !!$SHELL<CR>
 
+augroup remember_folds
+  autocmd!
+  autocmd BufWinLeave * mkview
+  autocmd BufWinEnter * silent! loadview
+augroup END
 
  """Important!!
 if has('termguicolors')
@@ -63,8 +68,8 @@ set hlsearch
 set ignorecase
 set smartcase
 set clipboard=unnamedplus
-set foldmethod=indent
-set foldnestmax=3
+" set foldmethod=indent
+" set foldnestmax=3
 
 syntax enable
 
