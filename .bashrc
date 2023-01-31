@@ -129,5 +129,23 @@ export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
 [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
 bind 'set completion-ignore-case on'
+
+#LS_COLORS env variable
 source ~/.bash_lscolors
+
+#sourcing fzf config
 [ -f ~/.fzf.bash ] && source ~/.fzf.bash
+
+#install fzf if doesnt exist
+#from https://script.install.devinsideyou.com/fzf 
+
+if ! [[ -d "$HOME/.fzf" ]] ; then
+  # install fzf
+  echo "installing fzf"
+  git clone --depth 1 https://github.com/junegunn/fzf.git ~/.fzf
+  ~/.fzf/install
+fi
+
+
+
+
