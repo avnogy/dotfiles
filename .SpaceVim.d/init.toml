@@ -18,30 +18,51 @@
     enable_guicolors = true
     # Disable statusline separator, if you want to use other value, please
     # install nerd fonts
-    statusline_separator = "arrow"
-    statusline_iseparator = "arrow"
+    statusline_separator = "nil"
+    statusline_iseparator = "nil"
     buffer_index_type = 4
     enable_tabline_filetype_icon = true
-    enable_statusline_mode = false
+    enable_statusline_mode = true
+    bootstrap_after = 'myspacevim#after'
 
 # Enable autocomplete layer
 [[layers]]
-name = 'autocomplete'
-auto_completion_return_key_behavior = "complete"
-auto_completion_tab_key_behavior = "smart"
+    name = 'autocomplete'
+    auto_completion_return_key_behavior = "complete"
+    auto_completion_tab_key_behavior = "smart"
 
 [[layers]]
-name = 'shell'
-default_position = 'bottom'
-default_height = 30
+    name = "lang#python"
+    python_file_head = [
+        '#!/usr/bin/env python',
+        '# -*- coding: utf-8 -*-',
+        '',
+        ''
+    ]
+    enable_typeinfo = true
+    enabled_linters = ['python', 'pylint']
+[[layers]]
+    name = "lsp"
+    enabled_clients = ['pyright', 'clangd','vimls']
 
-[options]
-bootstrap_after = 'myspacevim#after'
+[[layers]]
+    name = 'shell'
+    default_position = 'bottom'
+    default_height = 30
+
+[[layers]]
+    name = 'telescope'
 
 [[custom_plugins]]
-repo = 'ap/vim-css-color'
-merged = false
+    repo = 'ap/vim-css-color'
+    merged = false
+
+# [[layers]]
+    # name = "games"
+[[custom_plugins]]
+    repo = 'mbbill/undotree'
+    merged = false
 
 [[custom_plugins]]
-repo = 'mbbill/undotree'
-merged = false
+    repo = 'airblade/vim-rooter'
+    merged = false
