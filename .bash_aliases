@@ -24,4 +24,8 @@ alias cmd="cmd.exe"
 alias cdusr="cd /mnt/c/Users/avner/"
 alias updog="cmd /c \"python -m updog\""
 alias shutdown="cmd /c 'wsl --shutdown'"
+alias gs="git status"
+alias gd="git diff"
+alias gds="git diff --staged"
+alias gco='git checkout "$(git branch | sed "s/* //" | fzf)"'
 #alias nvim="VIMRUNTIME=$HOME/neovim/runtime $HOME/neovim/build/bin/nvim"
