@@ -21,8 +21,10 @@ alias cd..='cd ..'
 alias ..='cd ../' 
 alias ...='cd ../../../' 
 alias up='sudo apt update; sudo apt upgrade; sudo apt-get autoremove -yy; sudo apt-get clean' 
-alias ll="ls -l --time-style=long-iso" 
+alias ll="ls -alF --time-style=long-iso" 
 alias lsh="ls -A -I'*'" 
+alias la='ls -A'
+alias l='ls -CF'
 alias todo="todo-txt" 
 alias g="git"
 
@@ -42,7 +44,6 @@ alias cmd="cmd.exe"
 alias cdusr="cd /mnt/c/Users/avner/" 
 alias telebot='cdcode && cd commitions/telegram-repeater && ssh -i ~/telegram.pem ec2-user@ec2-34-204-91-110.compute-1.amazonaws.com' 
 alias everything="/mnt/c/Program\ Files/Everything/Everything.exe"
-
 
 # Git related aliases.
 alias gs="git status" 
