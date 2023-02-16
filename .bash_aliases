@@ -27,5 +27,10 @@ alias shutdown="cmd /c 'wsl --shutdown'"
 alias gs="git status"
 alias gd="git diff"
 alias gds="git diff --staged"
-alias gco='git checkout "$(git branch | sed "s/* //" | fzf)"'
+alias gco='git checkout "$(git branch | sed "s/* //" | sed "s/  //" | fzf)"'
+alias gb='git branch'
+alias todo="todo-txt"
+alias telebot='cdcode && cd commitions/telegram-repeater && ssh -i ~/telegram.pem ec2-user@ec2-34-204-91-110.compute-1.amazonaws.com'
+alias scv='cbonsai -liSt 0.01 -w 0.5'
+alias cmdo='cmd.exe /c'
 #alias nvim="VIMRUNTIME=$HOME/neovim/runtime $HOME/neovim/build/bin/nvim"
