@@ -10,41 +10,46 @@ HISTSIZE=10000000
 SAVEHIST=10000000
 HISTFILE="${XDG_CACHE_HOME:-$HOME/.cache}/zshhistory"
 
+### ctrl+arrows
+bindkey "\e[1;5C" forward-word
+bindkey "\e[1;5D" backward-word
+# urxvt
+bindkey "\eOc" forward-word
+bindkey "\eOd" backward-word
 
-# Basic auto/tab complete:
-autoload -U compinit
-zstyle ':completion:*' menu select
-zmodload zsh/complist
-compinit
-_comp_options+=(globdots)		# Include hidden files.
+### ctrl+delete
+bindkey "\e[3;5~" kill-word
+# urxvt
+bindkey "\e[3^" kill-word
 
-# Use vim keys in tab complete menu:
-bindkey -M menuselect 'h' vi-backward-char
-bindkey -M menuselect 'k' vi-up-line-or-history
-bindkey -M menuselect 'l' vi-forward-char
-bindkey -M menuselect 'j' vi-down-line-or-history
+### ctrl+backspace
+bindkey '^H' backward-kill-word
+
+### ctrl+shift+delete
+bindkey "\e[3;6~" kill-line
+bindkey "\e[3@" kill-line
 
 # Use modern completion system
-# autoload -Uz compinit
-# compinit
-#
-# zstyle ':completion:*' auto-description 'specify: %d'
-# zstyle ':completion:*' completer _expand _complete _correct _approximate
-# zstyle ':completion:*' format 'Completing %d'
-# zstyle ':completion:*' group-name ''
-# zstyle ':completion:*' menu select=2
-# eval "$(dircolors -b)"
-# zstyle ':completion:*:default' list-colors ${(s.:.)LS_COLORS}
-# zstyle ':completion:*' list-colors ''
-# zstyle ':completion:*' list-prompt %SAt %p: Hit TAB for more, or the character to insert%s
-# zstyle ':completion:*' matcher-list '' 'm:{a-z}={A-Z}' 'm:{a-zA-Z}={A-Za-z}' 'r:|[._-]=* r:|=* l:|=*'
+autoload -Uz compinit
+compinit
+
+zstyle ':completion:*' auto-description 'specify: %d'
+zstyle ':completion:*' completer _expand _complete _correct _approximate
+zstyle ':completion:*' format 'Completing %d'
+zstyle ':completion:*' group-name ''
+zstyle ':completion:*' menu select
+eval "$(dircolors -b)"
+zstyle ':completion:*:default' list-colors ${(s.:.)LS_COLORS}
+zstyle ':completion:*' list-colors ''
+zstyle ':completion:*' list-prompt %SAt %p: Hit TAB for more, or the character to insert%s
+zstyle ':completion:*' matcher-list '' 'm:{a-z}={A-Z}' 'm:{a-zA-Z}={A-Za-z}' 'r:|[._-]=* r:|=* l:|=*'
 # zstyle ':completion:*' menu select=long
-# zstyle ':completion:*' select-prompt %SScrolling active: current selection at %p%s
-# zstyle ':completion:*' use-compctl false
-# zstyle ':completion:*' verbose true
-#
-# zstyle ':completion:*:*:kill:*:processes' list-colors '=(#b) #([0-9]#)*=0=01;31'
-# zstyle ':completion:*:kill:*' command 'ps -u $USER -o pid,%cpu,tty,cputime,cmd'
+zstyle ':completion:*' select-prompt %SScrolling active: current selection at %p%s
+zstyle ':completion:*' use-compctl false
+zstyle ':completion:*' verbose true
+
+zstyle ':completion:*:*:kill:*:processes' list-colors '=(#b) #([0-9]#)*=0=01;31'
+zstyle ':completion:*:kill:*' command 'ps -u $USER -o pid,%cpu,tty,cputime,cmd'
 
 # If using WSL configure accordingly 
 if grep -qi Microsoft /proc/version; then
