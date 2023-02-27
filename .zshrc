@@ -53,12 +53,15 @@ zstyle ':completion:*:kill:*' command 'ps -u $USER -o pid,%cpu,tty,cputime,cmd'
 
 # If using WSL configure accordingly 
 if grep -qi Microsoft /proc/version; then
-  export DOWNLOADS="D/mnt/c/Users/avner/Download"
+  export DOWNLOADS="/mnt/c/Users/avner/Downloads"
   export DISPLAY=$(route.exe print | awk '/0.0.0.0/ {print $4; exit;}'):0.0
 fi
 
 # Sourcing .aliasrc
 [ -f ~/.aliasrc ] && source $HOME/.aliasrc
+
+# Sourcing LS_COLORS
+[ -f ~/.lscolors ] && source $HOME/.lscolors
 
 # Sourcing FZF config
 [ -f ~/.fzf.bash ] && source ~/.fzf.bash
