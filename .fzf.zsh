@@ -1,13 +1,13 @@
 # Setup fzf
 # ---------
-if [[ ! "$PATH" == */home/sleeper/.fzf/bin* ]]; then
-  PATH="${PATH:+${PATH}:}/home/sleeper/.fzf/bin"
+if [[ ! "$PATH" == *${HOME}/.fzf/bin* ]]; then
+  PATH="${PATH:+${PATH}:}${HOME}/.fzf/bin"
 fi
 
 # Auto-completion
 # ---------------
-[[ $- == *i* ]] && source "/home/sleeper/.fzf/shell/completion.zsh" 2> /dev/null
+[[ $- == *i* ]] && source "${HOME}/.fzf/shell/completion.zsh" 2> /dev/null
 
 # Key bindings
 # ------------
-source "/home/sleeper/.fzf/shell/key-bindings.zsh"
+source "${HOME}/.fzf/shell/key-bindings.zsh"
