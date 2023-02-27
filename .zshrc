@@ -64,7 +64,7 @@ fi
 [ -f ~/.lscolors ] && source $HOME/.lscolors
 
 # Sourcing FZF config
-[ -f ~/.fzf.bash ] && source ~/.fzf.bash
+[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 
 # Load syntax highlighting; should be last.
 source /usr/share/zsh/plugins/fast-syntax-highlighting/fast-syntax-highlighting.plugin.zsh 2>/dev/null
