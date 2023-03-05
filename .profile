@@ -33,6 +33,6 @@ else
 fi
 
 # Disable annoying beep in X server
-pidof X && xset b off && xset b 0 0 0
+[ "$environment" != "darwin" ] && pidof X && xset b off && xset b 0 0 0
 
 export EDITOR="vim"
