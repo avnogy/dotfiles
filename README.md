@@ -30,7 +30,7 @@ git clone https://github.com/avnogy/yadm.git
 ```
 Once the repository is cloned, you can copy the relevant dotfiles to your home directory manually. For example, to use the .zshrc file, simply copy it to your home directory with the following command:
 ```sh
-cp yadm/zshrc ~/.zshrc
+cp yadm/.zshrc ~/.zshrc
 ```
 Similarly, you can copy other dotfiles such as .aliasrc, .wslrc, and so on, depending on your needs.
 
