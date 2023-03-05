@@ -1,52 +1,37 @@
 #!/bin/sh
 
-
 # Verbosity and settings.
+[ "$environment" != "darwin" ] && alias rm="rm -vI" || alias rm="rm -vi"
 alias cp="cp -iv" 
 alias mv="mv -iv" 
-alias rm="rm -vI" 
 alias bc="bc -ql" 
 alias mkd="mkdir -pv" 
-alias ffmpeg="ffmpeg -hide_banner"
 
 # Colorize commands when possible.
-alias ls="ls -hN --color=auto --group-directories-first" 
+[ "$environment" != "darwin" ] && alias ls="ls --color=auto --group-directories-first" || alias ls="ls -G"
 alias grep="grep --color=auto" 
 alias diff="diff --color=auto" 
-alias ccat="highlight --out-format=ansi" 
-alias ip="ip -color=auto"
+[ "$environment" != "darwin" ] && alias ip="ip -color=auto"
 
 # Convenience
 alias cd..='cd ..' 
 alias ..='cd ../' 
 alias ...='cd ../../../' 
 alias up='sudo apt update; sudo apt upgrade; sudo apt-get autoremove -yy; sudo apt-get clean' 
-alias ll="ls -alF --time-style=long-iso" 
-alias lsh="ls -A -I'*'" 
+alias ll="ls -ahlF" 
+[ "$environment" != "darwin" ] && alias lll="ls -ahlF --time-style=long-iso" 
+[ "$environment" != "darwin" ] && alias lsh="ls -A -I'*'" || alias lsh="ls -A |  grep '^\.'"
 alias la='ls -A'
 alias l='ls -CF'
-alias todo="todo-txt" 
-alias g="git"
-alias projname='date +%d-%m-%Y_00'
+alias fdate='date +%d-%m-%Y_00'
 
 # Python aliases
 alias pyenv="source .venv/bin/activate" 
 alias httpserv="sudo python3 -m http.server" 
-alias updog="cmd /c \"python -m updog\"" 
-alias scv='cbonsai -liSt 0.01 -w 0.5'
-
-# WSL commands.
-alias cdcode='cd /mnt/d/code' 
-alias cmdo='cmd.exe /c' 
-alias gitsh="'/mnt/c/Program Files/Git/bin/bash.exe' -i -l" 
-alias explorer='explorer.exe .' 
-alias shutdown="cmd /c 'wsl --shutdown'" 
-alias cmd="cmd.exe" 
-alias cdusr="cd /mnt/c/Users/avner/" 
-alias telebot='cdcode && cd commitions/telegram-repeater && ssh -i ~/telegram.pem ec2-user@ec2-34-204-91-110.compute-1.amazonaws.com' 
-alias everything="/mnt/c/Program\ Files/Everything/Everything.exe"
+alias updog="sudo python -m updog" 
 
 # Git related aliases.
+alias g="git"
 alias gs="git status" 
 alias gd="git diff" 
 alias gds="git diff --staged" 

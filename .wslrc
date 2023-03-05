@@ -1,0 +1,28 @@
+#!/bin/sh
+if [ "$environment" != "wsl" ]; then
+        echo "This script is only supported on WSL."
+        exit 1
+fi
+
+# WSL X server
+export DISPLAY=$(route.exe print | awk '/0.0.0.0/ {print $4; exit;}'):0.0
+
+# WSL locations 
+export DOWNLOADS="/mnt/c/Users/avner/Downloads"
+export CODE="/mnt/d/code"
+export CDRIVE="/mnt/c"
+export DDRIVE="/mnt/d"
+export WINUSER="/mnt/c/Users/avner/"
+
+# WSL aliases
+alias cmdo='cmd.exe /c' 
+alias cmd="cmd.exe" 
+alias shutdown="cmdo 'wsl --shutdown'" 
+
+alias xpl='explorer.exe .' 
+alias everything="/mnt/c/Program\ Files/Everything/Everything.exe"
+alias gitsh="'/mnt/c/Program Files/Git/bin/bash.exe' -i -l" 
+alias telebot='cd $CODE && cd commitions/telegram-repeater && ssh -i ~/telegram.pem ec2-user@ec2-34-204-91-110.compute-1.amazonaws.com' 
+
+alias todo="todo-txt" 
+alias scv='cbonsai -liSt 0.01 -w 0.5'
