@@ -8,10 +8,6 @@
 # for ssh logins, install and configure the libpam-umask package.
 #umask 022
 
-# source rc files 
-[ -n "$BASH_VERSION" ]  && [ -f "~/.bashrc" ] && source "~/.bashrc"
-[ -n "$ZSH_VERSION" ]  && [ -f "~/.zshrc" ] && source "~/.zshrc"
-
 
 # set PATH so it includes user's private bin if it exists
 if [ -d "~/bin" ] ; then
@@ -23,7 +19,6 @@ if [ -d "~/.local/bin" ] ; then
     PATH="~/.local/bin:$PATH"
 fi
 
-
 # Set environment variable
 if uname -a | grep -qi "microsoft"; then
   export environment="wsl"
@@ -31,6 +26,10 @@ if uname -a | grep -qi "microsoft"; then
 else
   export environment="$(uname -s | tr '[:upper:]' '[:lower:]')"
 fi
+
+# source rc files 
+[ -n "$BASH_VERSION" ]  && [ -f "~/.bashrc" ] && source "~/.bashrc"
+[ -n "$ZSH_VERSION" ]  && [ -f "~/.zshrc" ] && source "~/.zshrc"
 
 # Disable annoying beep in X server
 [ "$environment" != "darwin" ] && pidof X && xset b off && xset b 0 0 0
