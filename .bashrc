@@ -8,10 +8,6 @@ case $- in
       *) return;;
 esac
 
-# Disable annoying beep in X server
-pidof X && xset b off && xset b 0 0 0
-
-
 # don't put duplicate lines or lines starting with space in the history.
 # See bash(1) for more options
 HISTCONTROL=ignoreboth
@@ -89,21 +85,8 @@ if [ -x /usr/bin/dircolors ]; then
     alias egrep='egrep --color=auto'
 fi
 
-#choose display for x server if wsl detected
-if [[ $(grep -i Microsoft /proc/version) ]]; then
-export DISPLAY=$(route.exe print | grep 0.0.0.0 | head -1 | awk '{print $4}'):0.0
-alias everything="'/mnt/c/Program Files/Everything/Everything.exe'"
-DOWNLOADS="/mnt/c/Users/avner/Downloads"
-export DOWNLOADS
-fi
-
 # colored GCC warnings and errors
 #export GCC_COLORS='error=01;31:warning=01;35:note=01;36:caret=01;32:locus=01:quote=01'
-
-# some more ls aliases
-alias ll='ls -alF'
-alias la='ls -A'
-alias l='ls -CF'
 
 # Add an "alert" alias for long running commands.  Use like so:
 #   sleep 10; alert
@@ -114,9 +97,8 @@ alias alert='notify-send --urgency=low -i "$([ $? = 0 ] && echo terminal || echo
 # ~/.bash_aliases, instead of adding them here directly.
 # See /usr/share/doc/bash-doc/examples in the bash-doc package.
 
-if [ -f ~/.bash_aliases ]; then
-    . ~/.bash_aliases
-fi
+[ -f ~/.bash_aliases ] && source ~/.bash_aliases
+[ -f ~/.aliasrc ] && source ~/.aliasrc
 
 # enable programmable completion features (you don't need to enable
 # this, if it's already enabled in /etc/bash.bashrc and /etc/profile
@@ -135,19 +117,7 @@ export NVM_DIR="$HOME/.nvm"
 bind 'set completion-ignore-case on'
 
 #LS_COLORS env variable
-source ~/.bash_lscolors
+[ -f ~/.lscolors ] && source ~/.lscolors
 
 #sourcing fzf config
 [ -f ~/.fzf.bash ] && source ~/.fzf.bash
-
-#install fzf if doesnt exist
-#from https://script.install.devinsideyou.com/fzf 
-
-if ! [[ -d "$HOME/.fzf" ]] ; then
-  # install fzf
-  echo "installing fzf"
-  git clone --depth 1 https://github.com/junegunn/fzf.git ~/.fzf
-  ~/.fzf/install
-fi
-
-pfetch
