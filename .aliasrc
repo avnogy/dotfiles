@@ -23,7 +23,6 @@ alias ll="ls -ahlF"
 [ "$environment" != "darwin" ] && alias lsh="ls -A -I'*'" || alias lsh="ls -A |  grep '^\.'"
 alias la='ls -A'
 alias l='ls -CF'
-alias fdate='date +%d-%m-%Y_00'
 
 # Python aliases
 alias pyenv="source .venv/bin/activate" 
@@ -38,3 +37,5 @@ alias gds="git diff --staged"
 alias gco='git checkout "$(git branch | sed "s/* //" | sed "s/  //" | fzf)"' 
 alias gb='git branch'
 
+# Sourcing personal aliases (ssh etc..)
+[ -f ~/.myaliasesrc ] && source ~/.myaliasesrc 
