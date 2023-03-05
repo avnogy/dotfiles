@@ -1,5 +1,5 @@
 ## yadm
-My configuration files for Linux, MacOS and WSL2 - hosted by  [yadm](https://github.com/TheLocehiliosan/yadm)
+My configuration files for Linux, MacOS and WSL2 - managed with [yadm](https://github.com/TheLocehiliosan/yadm)
 
 ## Requirements
 
