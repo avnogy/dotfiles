@@ -4,14 +4,22 @@ if [ "$environment" != "wsl" ]; then
         exit 1
 fi
 
+bindkey "^[[A" history-beginning-search-backward
+bindkey "^[[B" history-beginning-search-forward
+bindkey "^[[C" forward-char
+bindkey "^[[D" backward-char
+
+alias netext="cd /mnt/d/code/magshiproject && git status"
+
 # WSL X server
-export DISPLAY=$(route.exe print | awk '/0.0.0.0/ {print $4; exit;}'):0.0
+export DISPLAY=$(route.exe print | awk '/0.0.0.0/ {print $4; exit;}'):0.0 2> /dev/null
 
 # WSL locations 
 export DOWNLOADS="/mnt/c/Users/$(wslvar USERNAME)/Downloads"
 export CODE="/mnt/d/code"
 export CDRIVE="/mnt/c"
 export DDRIVE="/mnt/d"
+export HDRIVE="/mnt/h"
 export WINUSER="/mnt/c/Users/$(wslvar USERNAME)/"
 
 # WSL aliases

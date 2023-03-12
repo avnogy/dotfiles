@@ -121,3 +121,4 @@ bind 'set completion-ignore-case on'
 
 #sourcing fzf config
 [ -f ~/.fzf.bash ] && source ~/.fzf.bash
+. "$HOME/.cargo/env"
