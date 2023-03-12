@@ -43,22 +43,20 @@
     enabled_linters = ['python', 'pylint']
 
 [[layers]]
-  name = "lang#rust"
+name = "lang#rust"
 
-[[layers]]
-  name = "lsp"
-  filetypes = [
-    "rust"
-  ]
-  [layers.override_cmd]
-    rust = ["rls"]
+[layer.rust]
+enable = true
+rustup_toolchain = "stable"
+
 
 [[layers]]
     name = "lsp"
-    enabled_clients = ['pyright', 'clangd','vimls','rls']
+    enabled_clients = ['pyright', 'clangd','vimls']
 
 [[layers]]
   name = "colorscheme"
+
 
 [[layers]]
     name = 'shell'

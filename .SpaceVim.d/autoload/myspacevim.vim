@@ -17,5 +17,11 @@ function! myspacevim#after() abort
   set smartcase
   set clipboard=unnamedplus
 
+  noremap j h
+  noremap k j
+  noremap l k
+  noremap ; l
+
+
   echo "loaded myspacevim"
 endfunction
