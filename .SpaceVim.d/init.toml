@@ -11,7 +11,7 @@
     # set spacevim theme. by default colorscheme layer is not loaded,
     # if you want to use more colorscheme, please load the colorscheme
     # layer
-    colorscheme = "gruvbox"
+    colorscheme = "nord"
     colorscheme_bg = "dark"
     # Disable guicolors in basic mode, many terminal do not support 24bit
     # true colors
@@ -41,18 +41,33 @@
     ]
     enable_typeinfo = true
     enabled_linters = ['python', 'pylint']
+
+[[layers]]
+  name = "lang#rust"
+
+[[layers]]
+  name = "lsp"
+  filetypes = [
+    "rust"
+  ]
+  [layers.override_cmd]
+    rust = ["rls"]
+
 [[layers]]
     name = "lsp"
-    enabled_clients = ['pyright', 'clangd','vimls']
+    enabled_clients = ['pyright', 'clangd','vimls','rls']
+
+[[layers]]
+  name = "colorscheme"
 
 [[layers]]
     name = 'shell'
     default_position = 'bottom'
     default_height = 30
-
-[[layers]]
-    name = 'telescope'
-
+#
+# [[layers]]
+    # name = 'telescope'
+#
 [[custom_plugins]]
     repo = 'ap/vim-css-color'
     merged = false

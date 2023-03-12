@@ -1,11 +1,11 @@
 function! myspacevim#after() abort
   :noremap Q !!$SHELL<CR>
 
-  augroup remember_folds
-    autocmd!
-    au BufWinLeave ?* mkview 1
-    au BufWinEnter ?* silent! loadview 1
-  augroup END
+  " augroup remember_folds
+    " autocmd!
+    " au BufWinLeave ?* mkview 1
+    " au BufWinEnter ?* silent! loadview 1
+  " augroup END
 
   set relativenumber
   set wrap
@@ -16,5 +16,6 @@ function! myspacevim#after() abort
   set shiftwidth=4
   set smartcase
   set clipboard=unnamedplus
+
   echo "loaded myspacevim"
 endfunction
