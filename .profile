@@ -28,11 +28,13 @@ else
 fi
 
 # source rc files 
-[ -n "$BASH_VERSION" ]  && [ -f "~/.bashrc" ] && source "~/.bashrc"
-[ -n "$ZSH_VERSION" ]  && [ -f "~/.zshrc" ] && source "~/.zshrc"
+[ -n "$BASH_VERSION" ]  && [ -f "~/.config/bash/.bashrc" ] && source "~/.bashrc"
+[ -n "$ZSH_VERSION" ]  && [ -f "~/.config/zsh/.zshrc" ] && source "~/.zshrc"
 
 # Disable annoying beep in X server
 [ "$environment" != "darwin" ] && pidof X && xset b off && xset b 0 0 0
 
 export EDITOR="vim"
 . "$HOME/.cargo/env"
+
+export ZDOTDIR=$HOME/.config/zsh

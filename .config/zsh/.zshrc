@@ -18,17 +18,16 @@ HISTFILE="${XDG_CACHE_HOME:-$HOME/.cache}/zshhistory"
 
 
 # Sourcing .aliasrc
-[ -f ~/.aliasrc ] && source ~/.aliasrc || echo "Could not find ~/.aliasrc"
+[ -f ~/.config/.aliasrc ] && source ~/.config/.aliasrc || echo "Could not find ~/.aliasrc"
 
 # Sourcing LS_COLORS
-[ -f ~/.lscolors ] && source ~/.lscolors || echo "Could not find ls_colors file."
+[ -f ~/.config/.lscolors ] && source ~/.config/.lscolors || echo "Could not find ls_colors file."
 
 # Sourcing FZF config
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh || echo "Could not find fzf."
 
 
 # plugins
-plug "esc/conda-zsh-completion"
 plug "zsh-users/zsh-autosuggestions"
 plug "hlissner/zsh-autopair"
 plug "zsh-users/zsh-syntax-highlighting"
