@@ -1,5 +1,5 @@
 # using zap for plugin management
-[ -f "$HOME/.local/share/zap/zap.zsh" ] && source "$HOME/.local/share/zap/zap.zsh"
+[ -f "$HOME/.local/share/zap/zap.zsh" ] && source "$HOME/.local/share/zap/zap.zsh" || zsh <(curl -s https://raw.githubusercontent.com/zap-zsh/zap/master/install.zsh)
 
 # Enable colors and change prompt:
 autoload -U colors && colors	# Load colors
