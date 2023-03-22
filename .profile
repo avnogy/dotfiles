@@ -22,10 +22,13 @@ fi
 # Set environment variable
 if uname -a | grep -qi "microsoft"; then
   export environment="wsl"
-  [ -f ~/.wslrc ] && source ~/.wslrc
+  [ -f ~/.config/wsl/.wslrc ] && source ~/.config/wsl/.wslrc
 else
   export environment="$(uname -s | tr '[:upper:]' '[:lower:]')"
 fi
+
+# adding rust environment
+[ -f ~/.cargo/env ] && source ~/.cargo/env
 
 # source rc files 
 [ -n "$BASH_VERSION" ]  && [ -f "~/.config/bash/.bashrc" ] && source "~/.bashrc"
@@ -35,6 +38,6 @@ fi
 [ "$environment" != "darwin" ] && pidof X && xset b off && xset b 0 0 0
 
 export EDITOR="vim"
-. "$HOME/.cargo/env"
+
 
 export ZDOTDIR=$HOME/.config/zsh
