@@ -34,4 +34,5 @@ plug "zsh-users/zsh-syntax-highlighting"
 
 # keybinds
 bindkey '^ ' autosuggest-accept
-
+tmux
+tmux source-file ~/.config/tmux/tmux.conf
