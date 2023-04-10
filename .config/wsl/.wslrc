@@ -25,7 +25,7 @@ export WINUSER="/mnt/c/Users/$(wslvar USERNAME)/"
 # WSL aliases
 alias cmdo='cmd.exe /c' 
 alias cmd="cmd.exe" 
-
+alias cmdpy='cd "$(pwd -P)" && cmd.exe /k "cd /d $(wslpath -w "$(pwd -P)") && call .venv\\Scripts\\activate.bat"'
 alias xpl='explorer.exe .' 
 alias everything="/mnt/c/Program\ Files/Everything/Everything.exe"
 alias gitsh="'/mnt/c/Program Files/Git/bin/bash.exe' -i -l" 
