@@ -34,5 +34,7 @@ plug "zsh-users/zsh-syntax-highlighting"
 
 # keybinds
 bindkey '^ ' autosuggest-accept
-tmux -f  ~/.config/tmux/tmux.conf
 
+if [[ -z $TMUX ]]; then
+    tmux -f  ~/.config/tmux/tmux.conf
+fi

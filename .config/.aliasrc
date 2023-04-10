@@ -24,6 +24,9 @@ alias ll="ls -ahlF"
 alias la='ls -A'
 alias l='ls -CF'
 
+# tmux
+alias tmux='tmux -f  ~/.config/tmux/tmux.conf'
+
 # Python aliases
 alias pyenv="source .venv/bin/activate" 
 alias httpserv="sudo python3 -m http.server" 
@@ -63,5 +66,4 @@ bindkey "\e[3@" kill-line
 
 # Sourcing personal aliases (ssh etc..)
 [ -f ~/.myaliasesrc ] && source ~/.myaliasesrc 
-
 
