@@ -22,6 +22,5 @@ function! myspacevim#after() abort
   noremap l k
   noremap ; l
 
-  set t_ut=
   echo "loaded myspacevim"
 endfunction
