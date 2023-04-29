@@ -79,3 +79,7 @@ rustup_toolchain = "stable"
 [[custom_plugins]]
     repo = 'airblade/vim-rooter'
     merged = false
+
+[[custom_plugins]]
+    repo = 'tpope/vim-sensible'
+    merged = false
