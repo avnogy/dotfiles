@@ -10,3 +10,4 @@ chsh -s $(which zsh)
 git config --global user.email "avner.mindelis@gmail.com"
 git config --global user.name "avnogy"
 zsh <(curl -s https://raw.githubusercontent.com/zap-zsh/zap/master/install.zsh)
+git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
