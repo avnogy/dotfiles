@@ -26,6 +26,7 @@ HISTFILE="${XDG_CACHE_HOME:-$HOME/.cache}/zshhistory"
 # Sourcing FZF config
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh || echo "Could not find fzf."
 
+eval "$(zoxide init zsh)"
 
 # plugins
 plug "zsh-users/zsh-autosuggestions"
