@@ -14,20 +14,20 @@ alias netext="cd /mnt/d/code/magshiproject && git status"
 # WSL X server
 export DISPLAY=$(route.exe print | awk '/0.0.0.0/ {print $4; exit;}'):0.0 2> /dev/null
 
-# WSL locations 
-export DOWNLOADS="/mnt/c/Users/$(wslvar USERNAME)/Downloads"
+# WSL locations
+export DOWNLOADS="/mnt/c/Users/$WINUSERNAME/Downloads"
 export CODE="/mnt/d/code"
 export CDRIVE="/mnt/c"
 export DDRIVE="/mnt/d"
 export HDRIVE="/mnt/h"
-export WINUSER="/mnt/c/Users/$(wslvar USERNAME)/"
+export WINUSER="/mnt/c/Users/$WINUSERNAME/"
 
 # WSL aliases
-alias cmdo='cmd.exe /c' 
-alias cmd="cmd.exe" 
+alias cmdo='cmd.exe /c'
+alias cmd="cmd.exe"
 alias cmdpy='cd "$(pwd -P)" && cmd.exe /k "cd /d $(wslpath -w "$(pwd -P)") && call .venv\\Scripts\\activate.bat"'
-alias xpl='explorer.exe .' 
+alias xpl='explorer.exe .'
 alias everything="/mnt/c/Program\ Files/Everything/Everything.exe"
-alias gitsh="'/mnt/c/Program Files/Git/bin/bash.exe' -i -l" 
+alias gitsh="'/mnt/c/Program Files/Git/bin/bash.exe' -i -l"
 
-alias todo="todo-txt" 
+alias todo="todo-txt"

@@ -1,5 +1,3 @@
-[ -f ~/.profile ] && source ~/.profile || echo "Could not source profile" 
-
 # using zap for plugin management
 [ -f "$HOME/.local/share/zap/zap.zsh" ] && source "$HOME/.local/share/zap/zap.zsh" || zsh <(curl -s https://raw.githubusercontent.com/zap-zsh/zap/master/install.zsh)
 
@@ -18,6 +16,7 @@ HISTSIZE=1000000
 SAVEHIST=1000000
 HISTFILE="${XDG_CACHE_HOME:-$HOME/.cache}/zshhistory"
 
+export PATH="$HOME/.local/bin:$PATH"
 
 # Sourcing .aliasrc
 [ -f ~/.config/.aliasrc ] && source ~/.config/.aliasrc || echo "Could not find ~/.aliasrc"

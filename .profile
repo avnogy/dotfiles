@@ -22,7 +22,8 @@ fi
 # Set environment variable
 if uname -a | grep -qi "microsoft"; then
   export environment="wsl"
-  [ -f ~/.config/wsl/.wslrc ] && source ~/.config/wsl/.wslrc 
+  export WINUSERNAME=$(wslvar USERNAME)
+  # [ -f ~/.config/wsl/.wslrc ] && source ~/.config/wsl/.wslrc
 else
   export environment="$(uname -s | tr '[:upper:]' '[:lower:]')"
 fi

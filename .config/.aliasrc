@@ -45,6 +45,10 @@ alias gc='git commit'
 alias glast='git log -1 HEAD --stat'
 alias gdv='git difftool -t vimdiff -y'
 
+
+[ "$environment" == "wsl" ] && [ -f ~/.config/wsl/.wslrc ] && source ~/.config/wsl/.wslrc
+
+
 ### ctrl+arrows
 bindkey "\e[1;5C" forward-word
 bindkey "\e[1;5D" backward-word
