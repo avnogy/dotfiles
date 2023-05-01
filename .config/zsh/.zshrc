@@ -33,7 +33,7 @@ eval "$(zoxide init zsh)"
 plug "zsh-users/zsh-autosuggestions"
 plug "hlissner/zsh-autopair"
 plug "zsh-users/zsh-syntax-highlighting"
-
+plug "jeffreytse/zsh-vi-mode"
 # keybinds
 bindkey '^ ' autosuggest-accept
 
