@@ -23,17 +23,15 @@ fi
 if uname -a | grep -qi "microsoft"; then
   export environment="wsl"
   export WINUSERNAME=$(wslvar USERNAME)
-  # [ -f ~/.config/wsl/.wslrc ] && source ~/.config/wsl/.wslrc
 else
   export environment="$(uname -s | tr '[:upper:]' '[:lower:]')"
 fi
 
 # adding rust environment
 [ -f ~/.cargo/env ] && source ~/.cargo/env
-
 # source rc files 
-[ -n "$BASH_VERSION" ]  && [ -f "~/.config/bash/.bashrc" ] && source "~/.bashrc"
-[ -n "$ZSH_VERSION" ]  && [ -f "~/.config/zsh/.zshrc" ] && source "~/.zshrc"
+[ -n "$BASH_VERSION" ]  && [ -f "~/.config/bash/.bashrc" ] && source "~/.config/bash/.bashrc"
+# [ -n "$ZSH_VERSION" ]  && [ -f ~/.config/zsh/.zshrc ] && source ~/.config/zsh/.zshrc || echo "oh no"
 
 # Disable annoying beep in X server
 [ "$environment" != "darwin" ] && pidof X && xset b off && xset b 0 0 0

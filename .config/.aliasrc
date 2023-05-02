@@ -70,4 +70,3 @@ bindkey "\e[3@" kill-line
 
 # Sourcing personal aliases (ssh etc..)
 [ -f ~/.myaliasesrc ] && source ~/.myaliasesrc 
-

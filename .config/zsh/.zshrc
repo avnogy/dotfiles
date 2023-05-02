@@ -1,6 +1,13 @@
+[[ -z $TMUX ]] && tmux -f  ~/.config/tmux/tmux.conf
 # using zap for plugin management
 [ -f "$HOME/.local/share/zap/zap.zsh" ] && source "$HOME/.local/share/zap/zap.zsh" || zsh <(curl -s https://raw.githubusercontent.com/zap-zsh/zap/master/install.zsh)
 
+# plugins
+plug "zsh-users/zsh-autosuggestions"
+plug "hlissner/zsh-autopair"
+plug "zsh-users/zsh-syntax-highlighting"
+plug "Aloxaf/fzf-tab"
+#
 # Enable colors and change prompt:
 autoload -U colors && colors	# Load colors
 PS1="%B%{$fg[red]%}[%{$fg[yellow]%}%n%{$fg[green]%}@%{$fg[blue]%}%M %{$fg[magenta]%}%~%{$fg[red]%}]%{$reset_color%}$%b "
@@ -29,14 +36,6 @@ export PATH="$HOME/.local/bin:$PATH"
 
 eval "$(zoxide init zsh)"
 
-# plugins
-plug "zsh-users/zsh-autosuggestions"
-plug "hlissner/zsh-autopair"
-plug "zsh-users/zsh-syntax-highlighting"
-plug "jeffreytse/zsh-vi-mode"
 # keybinds
 bindkey '^ ' autosuggest-accept
 
-if [[ -z $TMUX ]]; then
-    tmux -f  ~/.config/tmux/tmux.conf
-fi
