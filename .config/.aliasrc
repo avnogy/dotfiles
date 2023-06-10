@@ -17,7 +17,8 @@ alias diff="diff --color=auto"
 alias cd..='cd ..' 
 alias ..='cd ../' 
 alias ...='cd ../../../' 
-alias up='sudo apt update; sudo apt upgrade; sudo apt-get autoremove -yy; sudo apt-get clean' 
+alias up='sudo apt update; sudo apt full-upgrade; sudo apt-get clean; sudo apt-get autoclean; sudo apt-get autoremove --purge;'
+alias upy='sudo apt update; sudo apt full-upgrade -y; sudo apt-get clean -y; sudo apt-get autoclean -y; sudo apt-get autoremove -y --purge'
 alias ll="ls -ahlF" 
 [ "$environment" != "darwin" ] && alias lll="ls -ahlF --time-style=long-iso" 
 [ "$environment" != "darwin" ] && alias lsh="ls -A -I'*'" || alias lsh="ls -A |  grep '^\.'"
