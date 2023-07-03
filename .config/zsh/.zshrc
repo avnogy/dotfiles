@@ -22,7 +22,7 @@ unsetopt beep hist_beep
 HISTSIZE=1000000
 SAVEHIST=1000000
 HISTFILE="${XDG_CACHE_HOME:-$HOME/.cache}/zshhistory"
-
+autoload -Uz compinit && compinit -u
 export PATH="$HOME/.local/bin:$PATH"
 
 # Sourcing .aliasrc
@@ -35,6 +35,7 @@ export PATH="$HOME/.local/bin:$PATH"
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh || echo "Could not find fzf."
 
 eval "$(zoxide init zsh)"
+
 
 # keybinds
 bindkey '^ ' autosuggest-accept
