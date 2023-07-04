@@ -26,8 +26,6 @@ let g:ctrlp_show_hidden = 1
 let g:ctrlp_switch_buffer = 'e'
 let g:ctrlp_follow_symlinks = 1
 
-
-
 "  Improving Responsivenes.
 set timeout timeoutlen=500 ttimeoutlen=100
 
@@ -93,10 +91,12 @@ noremap k j
 noremap l k
 noremap ; l
 
+" Radio controls
 inoremap jk <esc>
-inoremap ji <esc>:w<CR>i
-inoremap ju <esc>:u<CR>i
-inoremap jr <esc><C-r>i
+inoremap ji <esc>:w<CR>
+inoremap ju <esc>:u<CR>
+inoremap jr <esc><C-r>
+nnoremap jo <esc>ZZ
 
 " Execute Line
 noremap Q !!$SHELL<CR>
@@ -105,8 +105,15 @@ noremap Q !!$SHELL<CR>
 set splitbelow     " Split horizontally at the bottom
 set splitright     " Split vertically on the right
 
-nnoremap <Leader>\| :vertical  CtrlP<CR>
-nnoremap <Leader>- :split CtrlP<CR>
+" Window splitting
+nnoremap <C-a>\| :vsplit <CR>
+nnoremap <C-a>- :split <CR>
+
+" Tab splitting
+nnoremap <C-a>c :tabnew<CR>
+nnoremap <C-a>p :tabprevious<CR>
+nnoremap <C-a>n :tabnext<CR>
+
 
 " Window Sizing
 nnoremap <Leader>= <C-w>=   " Equalize window sizes
@@ -122,6 +129,7 @@ nnoremap <Leader>bp :bp<CR> " Switch to previous buffer
 
 nnoremap <leader>u :UndotreeToggle<CR>
 
+" Switching Windows
 nnoremap <A-Up> <C-W>k
 nnoremap <A-Down> <C-W>j
 nnoremap <A-Left> <C-W>h
