@@ -1,9 +1,6 @@
 "todo:
 "windows
 "make
-"cwd
-"splitting
-"https://shapeshed.com/vim-netrw/
 
 let mapleader = "\<Space>"
 
@@ -11,6 +8,8 @@ if empty(glob('~/.vim/autoload/plug.vim'))
   silent execute '!curl -fLo ~/.vim/autoload/plug.vim --create-dirs  https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim'
   autocmd VimEnter * PlugInstall --sync | source $MYVIMRC
 endif
+
+command CDC cd %:p:h
 
 call plug#begin()
 Plug 'jiangmiao/auto-pairs'
@@ -25,9 +24,6 @@ nnoremap <Leader>p :CtrlP<CR>
 let g:ctrlp_show_hidden = 1
 let g:ctrlp_switch_buffer = 'e'
 let g:ctrlp_follow_symlinks = 1
-
-"  Improving Responsivenes.
-set timeout timeoutlen=500 ttimeoutlen=100
 
 " Use CTRL-L to clear the highlighting of 'hlsearch'.
 nnoremap <silent> <C-L> :nohlsearch<Bar>diffupdate<CR><C-L>
@@ -46,35 +42,40 @@ if &t_Co == 8 && $TERM !~# '^Eterm'
   set t_Co=16
 endif
 
-" Pretty standard toggles
-syntax enable
-filetype plugin indent on
-
+" Vim Options
 set nocompatible
 set noswapfile
 set mouse=a
 set clipboard=unnamedplus
 set history=1000
+set timeout  
+set timeoutlen=500
+set ttimeoutlen=100
 
-set number
-set relativenumber
-
-set encoding=UTF-8
-set shiftwidth=4
-set autoindent
-set smartindent
-set wrap
-
+" Searching
 set incsearch
 set hlsearch
 set smartcase
 set ignorecase
 
+" Editor Settings
+syntax enable
+filetype plugin indent on
 set cursorline
 set showbreak=↳
 set noerrorbells
 set background=dark
+set wrap
+set number
+set relativenumber
 
+" Formatting
+set encoding=UTF-8
+set shiftwidth=4
+set autoindent
+set smartindent
+
+" Shifting exists visual mode
 vnoremap > >gv
 vnoremap < <gv
 
@@ -106,21 +107,21 @@ set splitbelow     " Split horizontally at the bottom
 set splitright     " Split vertically on the right
 
 " Window splitting
-nnoremap <C-a>\| :vsplit <CR>
-nnoremap <C-a>- :split <CR>
+nnoremap <C-s>\| :vsplit <CR>
+nnoremap <C-s>- :split <CR>
 
 " Tab splitting
-nnoremap <C-a>c :tabnew<CR>
-nnoremap <C-a>p :tabprevious<CR>
-nnoremap <C-a>n :tabnext<CR>
+nnoremap <C-s>c :tabnew<CR>
+nnoremap <C-s>p :tabprevious<CR>
+nnoremap <C-s>n :tabnext<CR>
 
 
 " Window Sizing
 nnoremap <Leader>= <C-w>=   " Equalize window sizes
-nnoremap <Leader><Up>    :resize -5<CR>   " Increase window height
-nnoremap <Leader><Down>  :resize +5<CR>   " Decrease window height
-nnoremap <Leader><Left>  :vertical resize -5<CR>   " Decrease window width
-nnoremap <Leader><Right> :vertical resize +5<CR>   " Increase window width
+nnoremap <C-s><Up>    :resize +5<CR>   " Increase window height
+nnoremap <C-s><Down>  :resize -5<CR>   " Decrease window height
+nnoremap <C-s><Left>  :vertical resize +5<CR>   " Decrease window width
+nnoremap <C-s><Right> :vertical resize -5<CR>   " Increase window width
 
 " Buffer Navigation
 nnoremap <Leader>bl :ls<CR>   " List open buffers
@@ -130,9 +131,9 @@ nnoremap <Leader>bp :bp<CR> " Switch to previous buffer
 nnoremap <leader>u :UndotreeToggle<CR>
 
 " Switching Windows
-nnoremap <A-Up> <C-W>k
-nnoremap <A-Down> <C-W>j
-nnoremap <A-Left> <C-W>h
-nnoremap <A-Right> <C-W>l
+nnoremap <C-s>j <C-W>h
+nnoremap <C-s>k <C-W>j
+nnoremap <C-s>l <C-W>k
+nnoremap <C-s>; <C-W>l
 
 nnoremap <leader>m :help<CR>
