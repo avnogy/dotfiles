@@ -1,3 +1,6 @@
+# importing scripts
+source ~/.scripts/check_and_execute.sh
+
 # using zap for plugin management
 [ -f "$HOME/.local/share/zap/zap.zsh" ] && source "$HOME/.local/share/zap/zap.zsh" # || zsh <(curl -s https://raw.githubusercontent.com/zap-zsh/zap/master/install.zsh)
 
@@ -23,6 +26,7 @@ SAVEHIST=1000000
 HISTFILE="${XDG_CACHE_HOME:-$HOME/.cache}/zshhistory"
 autoload -Uz compinit && compinit -u
 export PATH="$HOME/.local/bin:$PATH"
+export PATH="$HOME/bin:$PATH"
 
 # Sourcing .aliasrc
 [ -f ~/.aliasrc ] && source ~/.aliasrc || echo "Could not find ~/.aliasrc"
@@ -33,8 +37,7 @@ export PATH="$HOME/.local/bin:$PATH"
 # Sourcing FZF config
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh || echo "Could not find fzf."
 
-eval "$(zoxide init zsh)"
-
+eval "$(check_and_execute zoxide init zsh)"
 
 # keybinds
 bindkey '^ ' autosuggest-accept
