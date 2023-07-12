@@ -15,12 +15,14 @@ alias netext="cd /mnt/d/code/magshiproject && git status"
 export DISPLAY=$(route.exe print | awk '/0.0.0.0/ {print $4; exit;}'):0.0 2> /dev/null
 
 # WSL locations
-export DOWNLOADS="/mnt/c/Users/$WINUSERNAME/Downloads"
+if env | grep -q '^WINUSERNAME='; then
+  export DOWNLOADS="/mnt/c/Users/$WINUSERNAME/Downloads"
+  export WINUSER="/mnt/c/Users/$WINUSERNAME/"
+fi
 export CODE="/mnt/d/code"
 export CDRIVE="/mnt/c"
 export DDRIVE="/mnt/d"
 export HDRIVE="/mnt/h"
-export WINUSER="/mnt/c/Users/$WINUSERNAME/"
 
 # WSL aliases
 alias cmdo='cmd.exe /c'
