@@ -8,7 +8,7 @@ echo "Initialize chezmoi with the source repository.."
 echo "Backing up dotfiles..."
 backup_folder="dotfiles_backup"
 mkdir -p "$backup_folder"
-dotfiles=(".aliasrc" ".bashrc" ".fzf.zsh" ".lscolors" ".profile" ".tmux.conf" ".vimrc" ".wslrc" ".zprofile" ".zshrc")
+dotfiles=".aliasrc .bashrc .fzf.zsh .lscolors .profile .tmux.conf .vimrc .wslrc .zprofile .zshrc"
 
 for file in "${dotfiles[@]}"; do
   if [ -e "$HOME/$file" ]; then
