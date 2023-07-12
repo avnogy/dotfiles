@@ -29,9 +29,9 @@ fi
 
 # adding rust environment
 [ -f ~/.cargo/env ] && source ~/.cargo/env
+
 # source rc files 
-[ -n "$BASH_VERSION" ]  && [ -f "~/.config/bash/.bashrc" ] && source "~/.config/bash/.bashrc"
-# [ -n "$ZSH_VERSION" ]  && [ -f ~/.config/zsh/.zshrc ] && source ~/.config/zsh/.zshrc || echo "oh no"
+[ -n "$BASH_VERSION" ]  && [ -f "~/.bashrc" ] && source "~/.bashrc"
 
 # Disable annoying beep in X server
 [ "$environment" != "darwin" ] && pidof X && xset b off && xset b 0 0 0
@@ -39,4 +39,3 @@ fi
 export EDITOR="vim"
 
 
-export ZDOTDIR=$HOME/.config/zsh

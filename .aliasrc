@@ -25,9 +25,6 @@ alias ll="ls -ahlF"
 alias la='ls -A'
 alias l='ls -CF'
 
-# tmux
-alias tmux='tmux -f  ~/.config/tmux/tmux.conf'
-
 # Python aliases
 alias pyenv="source .venv/bin/activate" 
 alias httpserv="sudo python3 -m http.server" 
@@ -48,7 +45,7 @@ alias gdv='git difftool -t vimdiff -y'
 alias git-add-last='git commit --amend --no-edit'
 
 
-[ "$environment" == "wsl" ] && [ -f ~/.config/wsl/.wslrc ] && source ~/.config/wsl/.wslrc
+[ "$environment" == "wsl" ] && [ -f ~/.wslrc ] && source ~/.wslrc
 
 
 ### ctrl+arrows

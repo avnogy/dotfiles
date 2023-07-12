@@ -1,6 +1,5 @@
-[[ -z $TMUX ]] && tmux -f  ~/.config/tmux/tmux.conf
 # using zap for plugin management
-[ -f "$HOME/.local/share/zap/zap.zsh" ] && source "$HOME/.local/share/zap/zap.zsh" || zsh <(curl -s https://raw.githubusercontent.com/zap-zsh/zap/master/install.zsh)
+[ -f "$HOME/.local/share/zap/zap.zsh" ] && source "$HOME/.local/share/zap/zap.zsh" # || zsh <(curl -s https://raw.githubusercontent.com/zap-zsh/zap/master/install.zsh)
 
 # plugins
 plug "zsh-users/zsh-autosuggestions"
@@ -26,10 +25,10 @@ autoload -Uz compinit && compinit -u
 export PATH="$HOME/.local/bin:$PATH"
 
 # Sourcing .aliasrc
-[ -f ~/.config/.aliasrc ] && source ~/.config/.aliasrc || echo "Could not find ~/.aliasrc"
+[ -f ~/.aliasrc ] && source ~/.aliasrc || echo "Could not find ~/.aliasrc"
 
 # Sourcing LS_COLORS
-[ -f ~/.config/.lscolors ] && source ~/.config/.lscolors || echo "Could not find ls_colors file."
+[ -f ~/.lscolors ] && source ~/.lscolors || echo "Could not find ls_colors file."
 
 # Sourcing FZF config
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh || echo "Could not find fzf."
@@ -39,4 +38,7 @@ eval "$(zoxide init zsh)"
 
 # keybinds
 bindkey '^ ' autosuggest-accept
+
+# Running tmux as default and exising once it returns
+[ -z "$TMUX"  ] && { tmux attach || exec tmux new-session && exit;}
 
