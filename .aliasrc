@@ -45,6 +45,7 @@ alias gpl='git pull'
 alias gc='git commit'
 alias glast='git log -1 HEAD --stat'
 alias gdv='git difftool -t vimdiff -y'
+alias git-add-last='git commit --amend --no-edit'
 
 
 [ "$environment" == "wsl" ] && [ -f ~/.config/wsl/.wslrc ] && source ~/.config/wsl/.wslrc
