@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 echo "Installing chezmoi."
 sh -c "$(curl -fsLS git.io/chezmoi)"
 
