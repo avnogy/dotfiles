@@ -1,5 +1,3 @@
-#!/bin/sh
-
 # Verbosity and settings.
 [ "$environment" != "darwin" ] && alias rm="rm -vI" || alias rm="rm -v"
 alias cp="cp -iv" 
@@ -45,7 +43,7 @@ alias gdv='git difftool -t vimdiff -y'
 alias git-add-last='git commit --amend --no-edit'
 
 
-[ "$environment" == "wsl" ] && [ -f ~/.wslrc ] && source ~/.wslrc
+[ "$environment" == "wsl" ] && [ -f ~/.wslrc ] && source ~/.wslrc || true
 
 
 ### ctrl+arrows
@@ -68,4 +66,4 @@ bindkey "\e[3;6~" kill-line
 bindkey "\e[3@" kill-line
 
 # Sourcing personal aliases (ssh etc..)
-[ -f ~/.myaliasesrc ] && source ~/.myaliasesrc 
+[ -f ~/.myaliasesrc ] && source ~/.myaliasesrc || true
