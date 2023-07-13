@@ -9,7 +9,16 @@
 #umask 022
 
 # importing scripts
-source ~/.scripts/check_and_execute.sh
+check_and_execute() {
+    local command="$1"
+    shift
+    if command -v "$command" >/dev/null 2>&1; then
+        "$command" "$@"
+        return $?
+    else
+        return 127
+    fi
+}
 
 # Set environment variable
 if uname -a | grep -qi "microsoft"; then
