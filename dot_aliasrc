@@ -22,6 +22,8 @@ alias ll="ls -ahlF"
 [ "$environment" != "darwin" ] && alias lsh="ls -A -I'*'" || alias lsh="ls -A |  grep '^\.'"
 alias la='ls -A'
 alias l='ls -CF'
+alias "c=xclip"
+alias "v=xclip -o"
 
 # Python aliases
 alias pyenv="source .venv/bin/activate" 
