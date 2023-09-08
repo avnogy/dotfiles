@@ -18,6 +18,9 @@ Plug 'ap/vim-css-color'
 Plug 'ctrlpvim/ctrlp.vim'
 Plug 'mbbill/undotree'
 Plug 'tpope/vim-repeat'
+Plug 'prettier/vim-prettier', {                                                                                                                                                   
+  \ 'do': 'yarn install --frozen-lockfile --production',                                                                                                                          
+  \ 'for': ['javascript', 'typescript', 'css', 'less', 'scss', 'json', 'graphql', 'markdown', 'vue', 'svelte', 'yaml', 'html'] }
 call plug#end()
 
 nnoremap <Leader>p :CtrlP<CR>
