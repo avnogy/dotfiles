@@ -14,13 +14,11 @@ command CDC cd %:p:h
 call plug#begin()
 Plug 'jiangmiao/auto-pairs'
 Plug 'tomtom/tcomment_vim'
+Plug 'prettier/vim-prettier', { 'do': 'yarn install --frozen-lockfile --production' }
 Plug 'ap/vim-css-color'
 Plug 'ctrlpvim/ctrlp.vim'
 Plug 'mbbill/undotree'
 Plug 'tpope/vim-repeat'
-Plug 'prettier/vim-prettier', {                                                                                                                                                   
-  \ 'do': 'yarn install --frozen-lockfile --production',                                                                                                                          
-  \ 'for': ['javascript', 'typescript', 'css', 'less', 'scss', 'json', 'graphql', 'markdown', 'vue', 'svelte', 'yaml', 'html'] }
 call plug#end()
 
 nnoremap <Leader>p :CtrlP<CR>
@@ -96,11 +94,11 @@ noremap l k
 noremap ; l
 
 " Radio controls
-inoremap jk <esc>
-inoremap ji <esc>:w<CR>
-inoremap ju <esc>:u<CR>
-inoremap jr <esc><C-r>
-nnoremap jo <esc>ZZ
+inoremap <Leader>k <esc>
+inoremap <Leader>w <esc>:w<CR>
+inoremap <Leader>u <esc>:u<CR>
+inoremap <Leader>r <esc><C-r>
+nnoremap <Leader>o <esc>ZZ
 
 " Execute Line
 noremap Q !!$SHELL<CR>
