@@ -22,7 +22,7 @@ plug "Aloxaf/fzf-tab"
 # Enable colors and change prompt:
 autoload -U colors && colors	# Load colors
 # PS1="%B%{$fg[red]%}[%{$fg[yellow]%}%n%{$fg[green]%}@%{$fg[blue]%}%M %{$fg[magenta]%}%~%{$fg[red]%}]%{$reset_color%}$%b "
-PS1="[%n@%m %~]$ "
+PROMPT='%{$fg[green]%}%n@%m%{$reset_color%}:%{$fg[blue]%}%~%{$reset_color%}$ '
 
 stty stop undef		# Disable ctrl-s to freeze terminal.
 
