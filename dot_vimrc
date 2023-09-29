@@ -68,7 +68,6 @@ set noerrorbells
 set background=dark
 set wrap
 set number
-set relativenumber
 
 " Formatting
 set encoding=UTF-8
