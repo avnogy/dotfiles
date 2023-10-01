@@ -1,7 +1,3 @@
-"todo:
-"windows
-"make
-
 let mapleader = "\<Space>"
 
 if empty(glob('~/.vim/autoload/plug.vim'))
@@ -19,6 +15,7 @@ Plug 'ap/vim-css-color'
 Plug 'ctrlpvim/ctrlp.vim'
 Plug 'mbbill/undotree'
 Plug 'tpope/vim-repeat'
+Plug 'rust-lang/rust.vim'
 call plug#end()
 
 nnoremap <Leader>p :CtrlP<CR>
