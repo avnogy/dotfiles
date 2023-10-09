@@ -90,11 +90,11 @@ noremap l k
 noremap ; l
 
 " Radio controls
-inoremap <Leader>k <esc>
-inoremap <Leader>w <esc>:w<CR>
-inoremap <Leader>u <esc>:u<CR>
-inoremap <Leader>r <esc><C-r>
-nnoremap <Leader>o <esc>ZZ
+" inoremap <Leader>k <esc>
+" inoremap <Leader>w <esc>:w<CR>
+" inoremap <Leader>u <esc>:u<CR>
+" inoremap <Leader>r <esc><C-r>
+" nnoremap <Leader>o <esc>ZZ
 
 " Execute Line
 noremap Q !!$SHELL<CR>
