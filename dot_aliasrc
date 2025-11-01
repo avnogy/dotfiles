@@ -9,6 +9,8 @@ alias mkd="mkdir -pv"
 [ "$environment" != "darwin" ] && alias ls="ls --color=auto --group-directories-first" || alias ls="ls -G"
 alias grep="grep --color=auto" 
 alias diff="diff --color=auto" 
+alias fgrep='fgrep --color=auto'
+alias egrep='egrep --color=auto'
 [ "$environment" != "darwin" ] && alias ip="ip -color=auto"
 
 # Convenience
@@ -44,7 +46,10 @@ alias gdv='git difftool -t vimdiff -y'
 alias git-add-last='git commit --amend --no-edit'
 
 
-[ "$environment" == "wsl" ] && [ -f ~/.wslrc ] && source ~/.wslrc || true
 
-# Sourcing personal aliases (ssh etc..)
+# Add an "alert" alias for long running commands. Example: sleep 10; alert
+#todo check if notify-send
+alias alert='notify-send --urgency=low -i "$([ $? = 0 ] && echo terminal || echo error)" "$(history|tail -n1|sed -e '\''s/^\s*[0-9]\+\s*//;s/[;&|]\s*alert$//'\'')"'
+
+# Sourcing private aliases (ssh etc..)
 [ -f ~/.myaliasesrc ] && source ~/.myaliasesrc || true

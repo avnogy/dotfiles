@@ -1,39 +1,62 @@
 # ~/.profile: executed by the command interpreter for login shells.
 # This file is not read by bash(1), if ~/.bash_profile or ~/.bash_login
 # exists.
-# see /usr/share/doc/bash/examples/startup-files for examples.
-# the files are located in the bash-doc package.
+export EDITOR="vim"
 
-# the default umask is set in /etc/profile; for setting the umask
-# for ssh logins, install and configure the libpam-umask package.
-#umask 022
+# Appends a directory to PATH if not already present
+appendpath () {
+    case ":$PATH:" in
+        *:"$1":*)
+            ;;
+        *)
+            PATH="${PATH:+$PATH:}$1"
+    esac
+}
 
-# importing scripts
+# Checks if a command or script exists and executes it
 check_and_execute() {
     local command="$1"
     shift
-    if command -v "$command" >/dev/null 2>&1; then
-        "$command" "$@"
-        return $?
+    if [ "$command" = "source" ] || [ "$command" = "." ]; then
+        local script="$1"
+        shift
+        if [ -f "$script" ]; then
+            source "$script" "$@"
+            return $?
+        else
+            return 127
+        fi
     else
-        return 127
+        if command -v "$command" >/dev/null 2>&1; then
+            "$command" "$@"
+            return $?
+        elif [ -f "$command" ] && [ -x "$command" ]; then
+            "./$command" "$@"
+            return $?
+        else
+            return 127
+        fi
     fi
 }
 
-# Set environment variable
-if uname -a | grep -qi "microsoft"; then
-  export environment="wsl"
-    export WINUSERNAME=$(check_and_execute wslvar USERNAME)
-else
-  export environment="$(uname -s | tr '[:upper:]' '[:lower:]')"
-fi
+# Detects the kernel name, can be linux, wsl or darwin
+kernel_name () {
+    if uname -a | grep -qi "microsoft"; then
+        echo "wsl"
+    else
+        echo "$(uname -s | tr '[:upper:]' '[:lower:]')"
+    fi
+}
 
-# adding rust environment
-[ -f ~/.cargo/env ] && source ~/.cargo/env
+appendpath '/usr/local/sbin'
+appendpath '/usr/local/bin'
+appendpath '/usr/bin'
+appendpath '~/.local/bin'
+appendpath '~/.scripts'
 
-# Disable annoying beep in X server
-[ "$environment" != "darwin" ] && pidof X && xset b off && xset b 0 0 0
 
-export EDITOR="vim"
+[ "$(kernel_name)" = "wsl" ] && export WINUSERNAME=$(check_and_execute wslvar USERNAME) # Windows username
+[ "$(kernel_name)" != "darwin" ] && pidof X && xset b off && xset b 0 0 0 # Disable annoying beep in X server
 
+check_and_execute source ~/.cargo/env
 
