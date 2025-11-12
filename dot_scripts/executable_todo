@@ -1,0 +1,92 @@
+#!/bin/bash
+#
+# Script to add & remove entries in a list of todo items using dmenu
+#
+# Usage: todo-dmenu [dmenu options]
+#
+# - To cancel at any time, type escape;
+# - If environment variable TODO_LIST is set and not empty, todo-dmenu 
+#   will directly open the given todo list (the name being that of a file in the
+#   todo folder);
+# - If invoked without argument, todo-dmenu will first offer the choice of the todo
+#   list to use. Either select an existing list, or create a new one by typing it's
+#   name;
+# - Once in the todo list, you can:
+#     - Add a new todo, by entering it at the prompt. The current date/time
+#       will be appended to the name of the todo;
+#     - Remove a todo by selecting it and pressing enter.
+# - todo-dmenu remains in the todo list until esc is pressed
+#
+# Tasks are stored in text files, by default under ~/.todo-dmenu/ - anything that
+# can't be done with this tool can be done by editing the files directly.
+#
+# Requirements: dmenu, sed, awk, grep
+# The script can be invoked with any dmenu settings (eg. -i for case insensitivity)
+#
+
+# Path to utilities
+dmenu='/usr/local/bin/dmenu'
+echo_with_nl='printf %b'
+remove_empty_lines='sed /^\s*$/d'
+args='-l 10 -i'
+
+# Current time
+the_time=`date "+%F %T"`
+
+# Todo folder
+todo_folder=${HOME}/.todo
+todo_tmp=/tmp/todo-dmenu-tmp
+
+# Create the todo folder if necessary
+if [ ! -d "${todo_folder}" ]; then
+    mkdir -p "${todo_folder}"
+    if [ $? != 0 ]; then
+        echo "Failed to create todo folder in ${todo_folder}."
+        exit 1
+    fi
+fi
+
+# Invoke dmenu to get the name of the todo list
+if [ "$TODO_LIST" = "" ]; then
+    # Get name of lists. Only for shells that support process subsitution.
+    while IFS= read -d $'\0' -r file; do
+        list_name=`basename "${file}"`
+        todo_count=`wc -l "${file}" | cut -d' ' -f1`
+        lists="${list_name} (${todo_count})\\n${lists}"
+    done < <(find "${todo_folder}" -type f  -print0)
+    TODO_LIST=`${echo_with_nl} "${lists}" | ${dmenu} ${args}`
+    if [ $? -eq 1 ]; then
+        exit 0
+    fi
+    TODO_LIST=`echo "${TODO_LIST}" | sed 's/ ([0-9]*)$//'`
+fi
+
+todo="${todo_folder}/${TODO_LIST}"
+if [ ! -f "${todo}" ]; then
+    touch "${todo}"
+fi
+
+finished=0
+while [ "$finished" = "0" ]; do
+    # Build list of entries
+    entries=`cat "${todo}" | ${remove_empty_lines}`
+
+    # Get prompt
+    enter=`${echo_with_nl} "${entries}" | ${dmenu} ${args}`
+
+    # Do nothing on escape
+    if [ $? -eq 1 ]
+    then
+        exit 0
+    fi
+
+    # Test if this is an existing entry
+    grep -q "^${enter}" "${todo}"
+    if [ $? -eq 0 ]
+    then
+        grep -v "^${enter}" "${todo}" > "${todo_tmp}"
+        mv "${todo_tmp}" "${todo}"
+    else
+        echo "${enter} (${the_time})" >> "${todo}"
+    fi
+done
