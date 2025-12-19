@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 eval "$(ssh-agent -s)"
 ssh-add ~/.ssh/github
 
@@ -9,3 +9,5 @@ for repo in "${repos[@]}"; do
 
     cd "~/code/$repo" || { echo "Directory $repo not found!"; continue; }
     git pull mine master
+    cd -
+done
