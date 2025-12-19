@@ -1,3 +1,8 @@
+#!/bin/bash
+if [ $(hostname) = "eclipse" ]; then
+    xrandr --output HDMI-0 --rotate left
+fi
+
 picom &
 dunst &
 clipmenud &
