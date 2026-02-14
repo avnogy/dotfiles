@@ -1,6 +1,6 @@
 #!/bin/bash
 if [ $(hostname) = "eclipse" ]; then
-    xrandr --output HDMI-0 --rotate left
+    xrandr --output HDMI-0 --pos 0x0 --rotate left --output DP-0   --pos 1080x0 --rotate normal --primary
 fi
 
 picom &
