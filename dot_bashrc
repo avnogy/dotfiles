@@ -13,6 +13,7 @@ HISTCONTROL=ignoredups:erasedups:ignoreboth # don't put duplicate lines or lines
 shopt -s histappend # append to the history file, don't overwrite it
 HISTSIZE=10000
 HISTFILESIZE=20000
+eval "$(~/.local/bin/zoxide init bash)"
 PROMPT_COMMAND="history -a; history -c; history -r; $PROMPT_COMMAND"
 
 # Terminal
@@ -51,8 +52,6 @@ bind 'set completion-ignore-case on'
 check_and_execute source "$HOME/.fzf.bash"
 
 [ "$environment" == "wsl" ] && check_and_execute source "$HOME/.wslrc"
-
-eval "$(~/.local/bin/zoxide init bash)"
 
 #[ -z "$TMUX"  ] && { exec tmux new-session && exit;}
 
