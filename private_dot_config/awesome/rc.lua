@@ -360,8 +360,9 @@ globalkeys = gears.table.join(
     awful.key({ modkey}, "c", function() awful.spawn("google-chrome") end,
         { description = "open chrome", group = "launcher" }),
     awful.key({ modkey}, "m", function() awful.spawn(terminal .. " -e pulsemixer") end,
-        { description = "open pulsemixer tui", group = "launcher" })
-
+        { description = "open pulsemixer tui", group = "launcher" }),
+    awful.key({ modkey, "Shift"}, "BackSpace", function() awful.spawn(".scripts/sysact.sh") end,
+        { description = "open system action menu", group = "launcher" })
 )
 
 clientkeys = gears.table.join(
