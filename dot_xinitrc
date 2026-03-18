@@ -7,5 +7,6 @@ picom &
 dunst &
 clipmenud &
 lxpolkit &
-slstatus &
-exec dwm
+#slstatus &
+#exec dwm
+exec awesome
