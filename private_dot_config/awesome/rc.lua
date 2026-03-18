@@ -259,7 +259,7 @@ root.buttons(gears.table.join(
 
 -- {{{ Key bindings
 globalkeys = gears.table.join(
-    awful.key({ modkey, "Shift"}, "/", hotkeys_popup.show_help,
+    awful.key({ modkey, "Shift" }, "/", hotkeys_popup.show_help,
         { description = "show help", group = "awesome" }),
     awful.key({ modkey, }, "Left", awful.tag.viewprev,
         { description = "view previous", group = "tag" }),
@@ -341,7 +341,8 @@ globalkeys = gears.table.join(
 
     -- Prompt
     awful.key({ modkey }, "r", function()
-        awful.spawn.with_shell("dmenu_run") end,
+            awful.spawn.with_shell("dmenu_run")
+        end,
         { description = "run prompt", group = "launcher" }),
 
     awful.key({ modkey }, "x",
@@ -359,13 +360,13 @@ globalkeys = gears.table.join(
         { description = "show the menubar", group = "launcher" }),
 
     -- Other Keybinds
-    awful.key({ modkey}, "s", function() awful.spawn("spotify") end,
+    awful.key({ modkey }, "s", function() awful.spawn("spotify") end,
         { description = "open spotify", group = "launcher" }),
-    awful.key({ modkey}, "c", function() awful.spawn("google-chrome") end,
+    awful.key({ modkey }, "c", function() awful.spawn("google-chrome") end,
         { description = "open chrome", group = "launcher" }),
-    awful.key({ modkey}, "m", function() awful.spawn(terminal .. " -e pulsemixer") end,
+    awful.key({ modkey }, "m", function() awful.spawn(terminal .. " -e pulsemixer") end,
         { description = "open pulsemixer tui", group = "launcher" }),
-    awful.key({ modkey, "Shift"}, "BackSpace", function() awful.spawn(".scripts/sysact.sh") end,
+    awful.key({ modkey, "Shift" }, "BackSpace", function() awful.spawn(".scripts/sysact.sh") end,
         { description = "open system action menu", group = "launcher" })
 )
 
@@ -395,24 +396,24 @@ clientkeys = gears.table.join(
             c.minimized = true
         end,
         { description = "minimize", group = "client" })
-    -- awful.key({ modkey, }, "m",
-    --     function(c)
-    --         c.maximized = not c.maximized
-    --         c:raise()
-    --     end,
-    --     { description = "(un)maximize", group = "client" }),
-    -- awful.key({ modkey, "Control" }, "m",
-    --     function(c)
-    --         c.maximized_vertical = not c.maximized_vertical
-    --         c:raise()
-    --     end,
-    --     { description = "(un)maximize vertically", group = "client" }),
-    -- awful.key({ modkey, "Shift" }, "m",
-    --     function(c)
-    --         c.maximized_horizontal = not c.maximized_horizontal
-    --         c:raise()
-    --     end,
-    --     { description = "(un)maximize horizontally", group = "client" })
+-- awful.key({ modkey, }, "m",
+--     function(c)
+--         c.maximized = not c.maximized
+--         c:raise()
+--     end,
+--     { description = "(un)maximize", group = "client" }),
+-- awful.key({ modkey, "Control" }, "m",
+--     function(c)
+--         c.maximized_vertical = not c.maximized_vertical
+--         c:raise()
+--     end,
+--     { description = "(un)maximize vertically", group = "client" }),
+-- awful.key({ modkey, "Shift" }, "m",
+--     function(c)
+--         c.maximized_horizontal = not c.maximized_horizontal
+--         c:raise()
+--     end,
+--     { description = "(un)maximize horizontally", group = "client" })
 )
 
 -- Bind all key numbers to tags.
