@@ -104,7 +104,9 @@ local globalkeys = gears.table.join(
     awful.key({ consts.modkey }, "m", function() awful.spawn(consts.terminal .. " -e pulsemixer") end,
         { description = "open pulsemixer tui", group = "launcher" }),
     awful.key({ consts.modkey, "Shift" }, "BackSpace", function() awful.spawn(".scripts/sysact.sh") end,
-        { description = "open system action menu", group = "launcher" })
+        { description = "open system action menu", group = "launcher" }),
+    awful.key({ consts.modkey }, "v", function() awful.spawn("clipmenu") end,
+        { description = "open paste history menu", group = "launcher" })
 )
 
 
