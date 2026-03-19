@@ -4,7 +4,7 @@ local separator = wibox.widget {
     {
         id     = "txt",
         widget = wibox.widget.textbox,
-        text   = "|",
+        text   = " | ",
         align  = "center",
         valign = "center",
     },
