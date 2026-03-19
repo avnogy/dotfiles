@@ -1,7 +1,7 @@
 #!/bin/sh
 
 # A dmenu wrapper script for system functions.
-export WM="dwm"
+export WM="awesome"
 ctl="systemctl"
 
 lock(){
@@ -16,7 +16,7 @@ case "$(printf "lock\ndisplay off\nshutdown\nreboot\nleave $WM\nhibernate\nsleep
 	'display off') xset dpms force off ;;
 	'shutdown') $ctl poweroff -i ;;
 	'reboot') $ctl reboot -i ;;
-	"leave $WM") kill -TERM "$(pidof dwm)" ;;
+	"leave $WM") kill -TERM "$(pidof $WM)" ;;
 	'hibernate') slock $ctl hibernate -i ;;
 	'sleep') slock $ctl suspend -i ;;
 	*) exit 1 ;;
