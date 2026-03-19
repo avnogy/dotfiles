@@ -3,6 +3,8 @@ local beautiful = require("beautiful")
 
 local clientkeys = require("keybinds.clientkeys")
 local clientbuttons = require("keybinds.clientbuttons")
+
+-- Rules to apply to new clients (through the "manage" signal).
 local rules = {
     -- All clients will match this rule.
     {
