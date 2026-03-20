@@ -52,7 +52,7 @@ local globalkeys = gears.table.join(
         { description = "go back", group = "client" }),
 
     -- Standard program
-    awful.key({ consts.modkey, "Shift" }, "Return", function() awful.spawn(terminal) end,
+    awful.key({ consts.modkey, "Shift" }, "Return", function() awful.spawn(consts.terminal) end,
         { description = "open a terminal", group = "launcher" }),
     awful.key({ consts.modkey, "Control" }, "r", awesome.restart,
         { description = "reload awesome", group = "awesome" }),

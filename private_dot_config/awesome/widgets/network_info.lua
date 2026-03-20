@@ -47,7 +47,6 @@ local net_widget = wibox.widget {
     forced_height = 20,
 }
 
--- update function
 local function update()
     local iface = get_active_iface()
     local ip    = get_ip(iface)
