@@ -93,7 +93,9 @@ local globalkeys = gears.table.join(
     -- Other Keybinds
     awful.key({ consts.modkey }, "s", function() awful.spawn("spotify") end,
         { description = "open spotify", group = "launcher" }),
-    awful.key({ consts.modkey }, "c", function() awful.spawn("google-chrome") end,
+    awful.key({ consts.modkey }, "c", function()
+        awful.spawn({ "google-chrome-stable", "--disable-background-mode" })
+    end,
         { description = "open chrome", group = "launcher" }),
     awful.key({ consts.modkey }, "m", function() awful.spawn(consts.terminal .. " -e pulsemixer") end,
         { description = "open pulsemixer tui", group = "launcher" }),
