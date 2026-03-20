@@ -5,9 +5,8 @@ local consts = require("consts")
 local hotkeys_popup = require("awful.hotkeys_popup")
 local brightness = require("brightness")
 local tagkeys = require("bindings.tags")
+local layouts = require("ui.layouts")
 
--- Enable hotkeys help widget for VIM and other apps
--- when client with a matching name is opened:
 require("awful.hotkeys_popup.keys")
 
 local globalkeys = gears.table.join(
@@ -72,10 +71,8 @@ local globalkeys = gears.table.join(
         { description = "increase the number of columns", group = "layout" }),
     awful.key({ consts.modkey, "Control" }, "l", function() awful.tag.incncol(-1, nil, true) end,
         { description = "decrease the number of columns", group = "layout" }),
-    awful.key({ consts.modkey, }, "space", function() awful.layout.inc(1) end,
-        { description = "select next", group = "layout" }),
-    awful.key({ consts.modkey, "Shift" }, "space", function() awful.layout.inc(-1) end,
-        { description = "select previous", group = "layout" }),
+    awful.key({ consts.modkey, }, "space", layouts.choose,
+        { description = "choose layout", group = "layout" }),
 
     awful.key({ consts.modkey, "Control" }, "n",
         function()

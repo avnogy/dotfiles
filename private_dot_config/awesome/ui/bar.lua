@@ -49,13 +49,6 @@ awful.screen.connect_for_each_screen(function(s)
     awful.tag({ "1", "2", "3", "4", "5", "6", "7", "8", "9" }, s, awful.layout.layouts[1])
 
     s.mypromptbox = awful.widget.prompt()
-
-    s.mylayoutbox = awful.widget.layoutbox(s)
-    s.mylayoutbox:buttons(gears.table.join(
-        awful.button({}, 1, function() awful.layout.inc(1) end),
-        awful.button({}, 3, function() awful.layout.inc(-1) end),
-        awful.button({}, 4, function() awful.layout.inc(1) end),
-        awful.button({}, 5, function() awful.layout.inc(-1) end)))
     -- Create a taglist widget
     s.mytaglist = awful.widget.taglist {
         screen  = s,
@@ -119,7 +112,6 @@ awful.screen.connect_for_each_screen(function(s)
             cpu_widget,
             battery_widget,
             mytextclock,
-            s.mylayoutbox,
         },
     }
 end)
