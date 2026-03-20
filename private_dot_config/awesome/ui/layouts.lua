@@ -1,15 +1,7 @@
 local awful = require("awful")
-local beautiful = require("beautiful")
-local gears = require("gears")
-local wibox = require("wibox")
-local dpi = require("beautiful.xresources").apply_dpi
+local chooser_popup = require("ui.chooser_popup")
 
 local M = {}
-local chooser_width = dpi(420)
-local chooser_padding = dpi(20)
-local chooser_spacing = dpi(16)
-local chooser_row_height = dpi(24)
-local chooser_header_height = dpi(18)
 
 M.available = {
     awful.layout.suit.max,
@@ -31,11 +23,6 @@ M.available = {
 }
 
 awful.layout.layouts = M.available
-
-local chooser_height = (chooser_padding * 2)
-    + chooser_header_height
-    + chooser_spacing
-    + (#M.available * chooser_row_height)
 
 local function snapshot_client(client)
     -- Layout preview can move windows around, so keep enough state to undo it on cancel.
@@ -72,12 +59,12 @@ function M.choose()
 
     local original_layout = awful.layout.get(tag.screen)
     local current_index = 1
-    local chooser_popup
-    local chooser_rows
+    local popup
     local confirmed = false
     local query = ""
     local matches = {}
     local original_clients = {}
+    local original_focus = client.focus
 
     for _, client in ipairs(tag:clients()) do
         original_clients[client] = snapshot_client(client)
@@ -91,51 +78,10 @@ function M.choose()
     end
 
     local function clear_notice()
-        if chooser_popup then
-            chooser_popup.visible = false
-            chooser_popup = nil
-            chooser_rows = nil
+        if popup then
+            popup.visible = false
+            popup = nil
         end
-    end
-
-    local function ensure_popup()
-        if chooser_popup then
-            return
-        end
-
-        chooser_rows = wibox.widget {
-            spacing = dpi(6),
-            layout = wibox.layout.fixed.vertical,
-        }
-
-        chooser_popup = awful.popup {
-            screen = screen,
-            visible = true,
-            ontop = true,
-            border_width = beautiful.border_width,
-            border_color = beautiful.border_focus,
-            bg = beautiful.bg_focus,
-            fg = beautiful.fg_focus,
-            minimum_width = chooser_width,
-            minimum_height = chooser_height,
-            maximum_width = chooser_width,
-            maximum_height = chooser_height,
-            placement = awful.placement.centered,
-            widget = {
-                {
-                    {
-                        markup = "<b>Layout</b>",
-                        widget = wibox.widget.textbox,
-                        font = beautiful.font,
-                    },
-                    chooser_rows,
-                    spacing = chooser_spacing,
-                    layout = wibox.layout.fixed.vertical,
-                },
-                margins = chooser_padding,
-                widget = wibox.container.margin,
-            },
-        }
     end
 
     local function rebuild_matches()
@@ -160,64 +106,36 @@ function M.choose()
         end
     end
 
-    local function current_match_position()
-        for position, index in ipairs(matches) do
-            if index == current_index then
-                return position
-            end
-        end
-
-        current_index = matches[1]
-        return 1
-    end
-
     local function show_current()
-        ensure_popup()
-
-        chooser_rows:reset()
+        local rows = {}
 
         for i = 1, #matches do
             local index = matches[i]
-            local selected = index == current_index
-            local row = wibox.widget {
-                {
-                    text = (selected and "> " or "  ") .. awful.layout.getname(M.available[index]),
-                    widget = wibox.widget.textbox,
-                    font = beautiful.font,
-                    align = "left",
-                    valign = "center",
-                },
-                left = dpi(8),
-                right = dpi(8),
-                widget = wibox.container.margin,
+            rows[#rows + 1] = {
+                text = (index == current_index and "> " or "  ") .. awful.layout.getname(M.available[index]),
+                selected = index == current_index,
             }
-
-            if selected then
-                row = wibox.widget {
-                    {
-                        row,
-                        forced_height = chooser_row_height,
-                        widget = wibox.container.constraint,
-                    },
-                    bg = beautiful.bg_normal,
-                    border_width = beautiful.border_width,
-                    border_color = beautiful.border_focus,
-                    shape = gears.shape.rectangle,
-                    widget = wibox.container.background,
-                }
-            end
-
-            chooser_rows:add(row)
         end
 
-        chooser_popup.screen = screen
-        chooser_popup.visible = true
-        awful.placement.centered(chooser_popup, { parent = screen })
+        clear_notice()
+        popup = chooser_popup.new {
+            title = "Layout",
+            screen = screen,
+            rows = rows,
+        }
+    end
+
+    local function restore_focus()
+        if original_focus and original_focus.valid then
+            client.focus = original_focus
+            original_focus:raise()
+        end
     end
 
     local function preview_current()
         -- Preview is live: the selected tag changes immediately while the chooser is open.
         awful.layout.set(M.available[current_index], tag)
+        restore_focus()
         show_current()
     end
 
@@ -230,10 +148,21 @@ function M.choose()
                 restore_client(client, state)
             end
         end
+
+        restore_focus()
     end
 
     local function step_current(direction)
-        local position = current_match_position() + direction
+        local position = 1
+
+        for i, index in ipairs(matches) do
+            if index == current_index then
+                position = i
+                break
+            end
+        end
+
+        position = position + direction
         if position < 1 then
             position = #matches
         elseif position > #matches then
@@ -252,9 +181,22 @@ function M.choose()
         textbox = screen.mypromptbox.widget,
         changed_callback = function(input)
             -- Typing filters the list and previews the best remaining match.
+            local found = false
+
             query = input or ""
             rebuild_matches()
-            current_match_position()
+
+            for _, index in ipairs(matches) do
+                if index == current_index then
+                    found = true
+                    break
+                end
+            end
+
+            if not found then
+                current_index = matches[1]
+            end
+
             preview_current()
         end,
         keypressed_callback = function(_, key)
@@ -279,6 +221,7 @@ function M.choose()
         end,
         exe_callback = function()
             confirmed = true
+            restore_focus()
             clear_notice()
         end,
         done_callback = function()
