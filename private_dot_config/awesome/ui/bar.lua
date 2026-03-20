@@ -14,6 +14,7 @@ local volume_widget = require("widgets.volume")
 local home_used_widget = require("widgets.home_used")
 local home_total_widget = require("widgets.home_total")
 local ram_widget = require("widgets.ram")
+local gpu_widget = require("widgets.gpu")
 local cpu_widget = require("widgets.cpu")
 local mytextclock = wibox.widget.textclock("%F %T", 1)
 
@@ -108,6 +109,7 @@ awful.screen.connect_for_each_screen(function(s)
             home_used_widget,
             home_total_widget,
             ram_widget,
+            gpu_widget,
             cpu_widget,
             battery_widget,
             mytextclock,
