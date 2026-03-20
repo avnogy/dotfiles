@@ -16,7 +16,7 @@ local home_total_widget = require("widgets.home_total")
 local ram_widget = require("widgets.ram")
 local gpu_widget = require("widgets.gpu")
 local cpu_widget = require("widgets.cpu")
-local mytextclock = wibox.widget.textclock("%F %T", 1)
+local mytextclock = wibox.widget.textclock("%F %T ", 1)
 
 -- Create a wibox for each screen and add it
 local taglist_buttons = gears.table.join(
