@@ -119,7 +119,6 @@ awful.screen.connect_for_each_screen(function(s)
             cpu_widget,
             battery_widget,
             mytextclock,
-            seperator,
             s.mylayoutbox,
         },
     }
