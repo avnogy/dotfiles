@@ -1,4 +1,5 @@
 local gears = require("gears")
+local awful = require("awful")
 
 local helpers = require("widgets.helpers")
 
@@ -11,6 +12,12 @@ local function update()
 
     widget:set_text(string.format("| %s: %s | ", label, ip))
 end
+
+widget:buttons(gears.table.join(
+    awful.button({}, 1, function()
+        awful.spawn({ "nm-connection-editor" })
+    end)
+))
 
 gears.timer {
     timeout = 1,
