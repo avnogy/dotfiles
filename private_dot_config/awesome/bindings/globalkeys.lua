@@ -3,8 +3,8 @@ local awful = require("awful")
 local menubar = require("menubar")
 local consts = require("consts")
 local hotkeys_popup = require("awful.hotkeys_popup")
+local brightness = require("brightness")
 local tagkeys = require("bindings.tags")
-local brightness_script = os.getenv("HOME") .. "/.scripts/brightness.sh"
 
 -- Enable hotkeys help widget for VIM and other apps
 -- when client with a matching name is opened:
@@ -104,9 +104,9 @@ local globalkeys = gears.table.join(
         { description = "open system action menu", group = "launcher" }),
     awful.key({ consts.modkey }, "v", function() awful.spawn("clipmenu") end,
         { description = "open paste history menu", group = "launcher" }),
-    awful.key({}, "XF86MonBrightnessUp", function() awful.spawn({ brightness_script, "5%+" }) end,
+    awful.key({}, "XF86MonBrightnessUp", function() brightness.change("5%+") end,
         { description = "increase brightness", group = "launcher" }),
-    awful.key({}, "XF86MonBrightnessDown", function() awful.spawn({ brightness_script, "5%-" }) end,
+    awful.key({}, "XF86MonBrightnessDown", function() brightness.change("5%-") end,
         { description = "decrease brightness", group = "launcher" })
 )
 
