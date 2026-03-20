@@ -6,8 +6,7 @@ local consts = require("consts")
 
 
 local mykeyboardlayout = awful.widget.keyboardlayout()
-local battery = require("widgets.battery")
-local battery_widget = battery()
+local battery_widget = require("widgets.battery")
 local mytextclock = wibox.widget.textclock("%Y-%m-%d %H:%M:%S", 0.05)
 local net_widget = require("widgets.network_info")
 local seperator = require("widgets.seperator")
