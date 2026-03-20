@@ -9,16 +9,11 @@ local NOTIFICATION_TIMEOUT = 25
 local TIMEOUT = 10
 
 local global_last_warning
+local helpers = require("widgets.helpers")
+local battery_path = helpers.find_battery()
 
 local function has_battery()
-    local handle = io.popen("test -d /sys/class/power_supply/BAT0 && echo yes")
-    if not handle then
-        return false
-    end
-
-    local result = handle:read("*l")
-    handle:close()
-    return result == "yes"
+    return battery_path ~= nil
 end
 
 local function state_symbol(status)
@@ -88,7 +83,7 @@ local function update_widget()
         end
 
         battery_text.text = string.format(
-            "BAT %s %d%% %s",
+            "BAT %s %d%% %s | ",
             state_symbol(status),
             charge,
             extract_time(stdout, status)

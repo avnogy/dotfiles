@@ -7,8 +7,15 @@ local consts = require("consts")
 
 local mykeyboardlayout = awful.widget.keyboardlayout()
 local battery_widget = require("widgets.battery")
-local mytextclock = wibox.widget.textclock("%Y-%m-%d %H:%M:%S", 0.05)
-local net_widget = require("widgets.network_info")
+local ipv4_widget = require("widgets.ipv4")
+local net_down_widget = require("widgets.net_down")
+local net_up_widget = require("widgets.net_up")
+local volume_widget = require("widgets.volume")
+local home_used_widget = require("widgets.home_used")
+local home_total_widget = require("widgets.home_total")
+local ram_widget = require("widgets.ram")
+local cpu_widget = require("widgets.cpu")
+local mytextclock = wibox.widget.textclock("%F %T", 1)
 local seperator = require("widgets.seperator")
 
 -- Create a wibox for each screen and add it
@@ -103,12 +110,17 @@ awful.screen.connect_for_each_screen(function(s)
             wibox.widget.systray(),
             seperator,
             mykeyboardlayout,
-            seperator,
-            net_widget,
-            seperator,
+            ipv4_widget,
+            net_down_widget,
+            net_up_widget,
+            volume_widget,
+            home_used_widget,
+            home_total_widget,
+            ram_widget,
+            cpu_widget,
             battery_widget,
-            seperator,
             mytextclock,
+            seperator,
             s.mylayoutbox,
         },
     }
