@@ -93,7 +93,12 @@ function M.get_wifi_name(iface)
         return nil
     end
 
-    local essid = M.read_command("iw dev " .. iface .. " link | awk -F': ' '/SSID/ {print $2; exit}'")
+    local essid = M.read_command("nmcli -t -f GENERAL.CONNECTION device show " .. iface .. " | awk -F: 'NR==1 {print $2}'")
+    if essid and essid ~= "" and essid ~= "--" then
+        return essid
+    end
+
+    essid = M.read_command("iw dev " .. iface .. " link | awk -F': ' '/SSID/ {print $2; exit}'")
     if essid and essid ~= "" then
         return essid
     end
