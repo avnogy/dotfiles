@@ -88,6 +88,19 @@ function M.get_active_ipv4()
     return nil
 end
 
+function M.get_wifi_name(iface)
+    if not iface then
+        return nil
+    end
+
+    local essid = M.read_command("iw dev " .. iface .. " link | awk -F': ' '/SSID/ {print $2; exit}'")
+    if essid and essid ~= "" then
+        return essid
+    end
+
+    return nil
+end
+
 function M.read_df_bytes(path, field)
     local value = M.read_command("df -B1 " .. path .. " | awk 'NR==2 {print $" .. field .. "}'")
     return value and tonumber(value) or nil
