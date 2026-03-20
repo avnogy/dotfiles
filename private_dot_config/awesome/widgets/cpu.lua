@@ -1,5 +1,7 @@
 local gears = require("gears")
+local awful = require("awful")
 
+local consts = require("consts")
 local helpers = require("widgets.helpers")
 
 local widget = helpers.new_text_widget()
@@ -39,6 +41,12 @@ local function update()
     local percent = math.floor(100 * (current_active - previous_active) / total_delta)
     widget:set_text(string.format("CPU %s%% | ", tostring(percent)))
 end
+
+widget:buttons(gears.table.join(
+    awful.button({}, 1, function()
+        awful.spawn({ consts.terminal, "-e", "htop" })
+    end)
+))
 
 gears.timer {
     timeout = 1,
