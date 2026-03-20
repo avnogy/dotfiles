@@ -1,27 +1,32 @@
--- network_widget.lua
-local wibox   = require("wibox")
-local awful   = require("awful")
-local gears   = require("gears")
-local beautiful = require("beautiful")
+local wibox = require("wibox")
+local gears = require("gears")
 
--- helper to get the first active interface (eth0 or wlan0)
+-- Follow the default route first, then fall back to the first non-loopback link.
 local function get_active_iface()
-    local handle = io.popen("ip -o -4 addr show up | awk '{print $2}'")
+    local handle = io.popen("ip -o route show to default | awk 'NR==1 {print $5}'")
     if not handle then return nil end
-    local result = handle:read("*a")
+    local iface = handle:read("*l")
     handle:close()
-    for iface in result:gmatch("[^\n]+") do
-        if iface == "eth0" or iface == "enp4s0" or iface == "wlan0" then
-            return iface
-        end
+
+    if iface and iface ~= "" then
+        return iface
     end
-    return nil
+
+    handle = io.popen("ip -o link show up | awk -F': ' '$2 != \"lo\" {print $2; exit}'")
+    if not handle then return nil end
+    iface = handle:read("*l")
+    handle:close()
+
+    return iface ~= "" and iface or nil
 end
 
--- helper to get the IP address of a given interface
+-- Read the first global IPv4 address for the interface.
 local function get_ip(iface)
     if not iface then return "—" end
-    local cmd = string.format("ip -4 addr show %s | grep -oP '(?<=inet\\s)\\d+(\\.\\d+){3}'", iface)
+    local cmd = string.format(
+        "ip -o -4 addr show dev %q scope global | awk 'NR==1 {split($4, a, \"/\"); print a[1]}'",
+        iface
+    )
     local handle = io.popen(cmd)
     if not handle then return "—" end
     local ip = handle:read("*l") or "—"
@@ -50,9 +55,8 @@ local function update()
     net_widget.text:set_text(txt)
 end
 
--- timer: refresh every 10 seconds
 gears.timer {
-    timeout   = 10,
+    timeout   = 2,
     autostart = true,
     call_now  = true,
     callback  = update,
