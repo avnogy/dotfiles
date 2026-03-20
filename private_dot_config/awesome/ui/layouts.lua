@@ -1,7 +1,15 @@
 local awful = require("awful")
-local naughty = require("naughty")
+local beautiful = require("beautiful")
+local gears = require("gears")
+local wibox = require("wibox")
+local dpi = require("beautiful.xresources").apply_dpi
 
 local M = {}
+local chooser_width = dpi(420)
+local chooser_padding = dpi(20)
+local chooser_spacing = dpi(16)
+local chooser_row_height = dpi(24)
+local chooser_header_height = dpi(18)
 
 M.available = {
     awful.layout.suit.max,
@@ -23,6 +31,11 @@ M.available = {
 }
 
 awful.layout.layouts = M.available
+
+local chooser_height = (chooser_padding * 2)
+    + chooser_header_height
+    + chooser_spacing
+    + (#M.available * chooser_row_height)
 
 local function snapshot_client(client)
     -- Layout preview can move windows around, so keep enough state to undo it on cancel.
@@ -59,7 +72,8 @@ function M.choose()
 
     local original_layout = awful.layout.get(tag.screen)
     local current_index = 1
-    local chooser_notice
+    local chooser_popup
+    local chooser_rows
     local confirmed = false
     local query = ""
     local matches = {}
@@ -77,10 +91,51 @@ function M.choose()
     end
 
     local function clear_notice()
-        if chooser_notice then
-            naughty.destroy(chooser_notice)
-            chooser_notice = nil
+        if chooser_popup then
+            chooser_popup.visible = false
+            chooser_popup = nil
+            chooser_rows = nil
         end
+    end
+
+    local function ensure_popup()
+        if chooser_popup then
+            return
+        end
+
+        chooser_rows = wibox.widget {
+            spacing = dpi(6),
+            layout = wibox.layout.fixed.vertical,
+        }
+
+        chooser_popup = awful.popup {
+            screen = screen,
+            visible = true,
+            ontop = true,
+            border_width = beautiful.border_width,
+            border_color = beautiful.border_focus,
+            bg = beautiful.bg_focus,
+            fg = beautiful.fg_focus,
+            minimum_width = chooser_width,
+            minimum_height = chooser_height,
+            maximum_width = chooser_width,
+            maximum_height = chooser_height,
+            placement = awful.placement.centered,
+            widget = {
+                {
+                    {
+                        markup = "<b>Layout</b>",
+                        widget = wibox.widget.textbox,
+                        font = beautiful.font,
+                    },
+                    chooser_rows,
+                    spacing = chooser_spacing,
+                    layout = wibox.layout.fixed.vertical,
+                },
+                margins = chooser_padding,
+                widget = wibox.container.margin,
+            },
+        }
     end
 
     local function rebuild_matches()
@@ -117,21 +172,47 @@ function M.choose()
     end
 
     local function show_current()
-        clear_notice()
+        ensure_popup()
 
-        -- Show a short window into the current match list rather than the whole layout list.
-        local lines = {}
-        for i = 1, math.min(#matches, 8) do
+        chooser_rows:reset()
+
+        for i = 1, #matches do
             local index = matches[i]
-            local prefix = index == current_index and "> " or "  "
-            lines[#lines + 1] = prefix .. awful.layout.getname(M.available[index])
+            local selected = index == current_index
+            local row = wibox.widget {
+                {
+                    text = (selected and "> " or "  ") .. awful.layout.getname(M.available[index]),
+                    widget = wibox.widget.textbox,
+                    font = beautiful.font,
+                    align = "left",
+                    valign = "center",
+                },
+                left = dpi(8),
+                right = dpi(8),
+                widget = wibox.container.margin,
+            }
+
+            if selected then
+                row = wibox.widget {
+                    {
+                        row,
+                        forced_height = chooser_row_height,
+                        widget = wibox.container.constraint,
+                    },
+                    bg = beautiful.bg_normal,
+                    border_width = beautiful.border_width,
+                    border_color = beautiful.border_focus,
+                    shape = gears.shape.rectangle,
+                    widget = wibox.container.background,
+                }
+            end
+
+            chooser_rows:add(row)
         end
 
-        chooser_notice = naughty.notify {
-            title = "Layout",
-            text = table.concat(lines, "\n"),
-            timeout = 0,
-        }
+        chooser_popup.screen = screen
+        chooser_popup.visible = true
+        awful.placement.centered(chooser_popup, { parent = screen })
     end
 
     local function preview_current()
