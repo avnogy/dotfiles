@@ -11,7 +11,7 @@ local function get_active_iface()
     local result = handle:read("*a")
     handle:close()
     for iface in result:gmatch("[^\n]+") do
-        if iface == "eth0" or iface == "wlan0" then
+        if iface == "eth0" or iface == "enp4s0" or iface == "wlan0" then
             return iface
         end
     end
