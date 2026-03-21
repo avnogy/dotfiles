@@ -24,7 +24,7 @@ local function update()
     end
 
     local used = total - free - buffers - cached - sreclaimable + shmem
-    widget:set_text(string.format("RAM %s | ", helpers.fmt_human(used * 1024, 1024)))
+    widget:set_text(string.format("RAM %s | ", helpers.fmt_human(used * 1024, 1000)))
 end
 
 gears.timer {

@@ -18,7 +18,8 @@ function M.fmt_human(num, base)
         index = index + 1
     end
 
-    return string.format("%.1f %s", scaled, prefixes[index])
+    local fmt = (scaled == math.floor(scaled)) and "%.0f %s" or "%.1f %s"
+    return string.format(fmt, scaled, prefixes[index]) .. "B"
 end
 
 function M.read_number(path)
@@ -48,67 +49,39 @@ function M.read_command(command)
     if not handle then
         return nil
     end
-
     local output = handle:read("*l")
     handle:close()
     return output
 end
 
-function M.get_active_iface()
-    local iface = M.read_command("ip -o route show to default | awk 'NR==1 {print $5}'")
-    if iface and iface ~= "" then
-        return iface
-    end
-
-    iface = M.read_command("ip -o link show up | awk -F': ' '$2 != \"lo\" {print $2; exit}'")
-    if iface and iface ~= "" then
-        return iface
-    end
-
-    return nil
-end
-
-function M.get_active_ipv4()
-    local iface = M.get_active_iface()
-    if not iface then
+function M.read_df_bytes(path)
+    local f = io.popen("df -B1 " .. path .. " 2>/dev/null")
+    if not f then
         return nil
     end
-
-    local ip = M.read_command(
-        string.format(
-            "ip -o -4 addr show dev %q scope global | awk 'NR==1 {split($4, a, \"/\"); print a[1]}'",
-            iface
-        )
-    )
-
-    if ip and ip ~= "" then
-        return ip
-    end
-
-    return nil
-end
-
-function M.get_wifi_name(iface)
-    if not iface then
+    local _ = f:read("*l")
+    local line = f:read("*l")
+    f:close()
+    if not line then
         return nil
     end
-
-    local essid = M.read_command("nmcli -t -f GENERAL.CONNECTION device show " .. iface .. " | awk -F: 'NR==1 {print $2}'")
-    if essid and essid ~= "" and essid ~= "--" then
-        return essid
-    end
-
-    essid = M.read_command("iw dev " .. iface .. " link | awk -F': ' '/SSID/ {print $2; exit}'")
-    if essid and essid ~= "" then
-        return essid
-    end
-
-    return nil
+    local total = line:match("^%S+%s+%S+%s+(%d+)")
+    return total and tonumber(total) or nil
 end
 
-function M.read_df_bytes(path, field)
-    local value = M.read_command("df -B1 " .. path .. " | awk 'NR==2 {print $" .. field .. "}'")
-    return value and tonumber(value) or nil
+function M.read_df_used(path)
+    local f = io.popen("df -B1 " .. path .. " 2>/dev/null")
+    if not f then
+        return nil
+    end
+    local _ = f:read("*l")
+    local line = f:read("*l")
+    f:close()
+    if not line then
+        return nil
+    end
+    local used = line:match("^%S+%s+(%d+)")
+    return used and tonumber(used) or nil
 end
 
 function M.read_meminfo()
@@ -126,23 +99,32 @@ function M.read_meminfo()
 end
 
 function M.read_cpu_stats()
-    local line = M.read_command("awk 'NR==1 {print $2, $3, $4, $5, $6, $7, $8}' /proc/stat")
+    local f = io.open("/proc/stat", "r")
+    if not f then
+        return nil
+    end
+    local line = f:read("*l")
+    f:close()
     if not line then
         return nil
     end
-
     local stats = {}
     for value in line:gmatch("(%d+)") do
         stats[#stats + 1] = tonumber(value)
     end
-
-    return #stats == 7 and stats or nil
+    return #stats >= 7 and { stats[1], stats[2], stats[3], stats[4], stats[5], stats[6], stats[7] } or nil
 end
 
 function M.find_battery()
-    local battery = M.read_command("find /sys/class/power_supply -maxdepth 1 -type d -name 'BAT*' | head -n1")
-    if battery and battery ~= "" then
-        return battery
+    local candidates = {
+        "/sys/class/power_supply/BAT0",
+        "/sys/class/power_supply/BAT1",
+    }
+
+    for _, battery in ipairs(candidates) do
+        if M.read_number(battery .. "/capacity") then
+            return battery
+        end
     end
 
     return nil

@@ -1,5 +1,6 @@
 local gears = require("gears")
 local awful = require("awful")
+local beautiful = require("beautiful")
 local wibox = require("wibox")
 
 local consts = require("consts")
@@ -7,12 +8,9 @@ local consts = require("consts")
 
 local mykeyboardlayout = awful.widget.keyboardlayout()
 local battery_widget = require("widgets.battery")
-local ipv4_widget = require("widgets.ipv4")
-local net_down_widget = require("widgets.net_down")
-local net_up_widget = require("widgets.net_up")
+local network_widget = require("widgets.network")
 local volume_widget = require("widgets.volume")
-local home_used_widget = require("widgets.home_used")
-local home_total_widget = require("widgets.home_total")
+local home_widget = require("widgets.home")
 local ram_widget = require("widgets.ram")
 local gpu_widget = require("widgets.gpu")
 local cpu_widget = require("widgets.cpu")
@@ -46,7 +44,13 @@ screen.connect_signal("property::geometry", set_wallpaper)
 awful.screen.connect_for_each_screen(function(s)
     set_wallpaper(s)
 
-    awful.tag({ "1", "2", "3", "4", "5", "6", "7", "8", "9" }, s, awful.layout.layouts[1])
+    local tags = awful.tag({ "1", "2", "3", "4", "5", "6", "7", "8", "9" }, s, awful.layout.layouts[1])
+
+    for _, tag in ipairs(tags) do
+        tag:connect_signal("property::layout", function(t)
+            t.gap = t.layout == awful.layout.suit.max.fullscreen and 0 or beautiful.useless_gap
+        end)
+    end
 
     s.mypromptbox = awful.widget.prompt()
     -- Create a taglist widget
@@ -102,12 +106,9 @@ awful.screen.connect_for_each_screen(function(s)
             layout = wibox.layout.fixed.horizontal,
             wibox.widget.systray(),
             mykeyboardlayout,
-            ipv4_widget,
-            net_down_widget,
-            net_up_widget,
+            network_widget,
             volume_widget,
-            home_used_widget,
-            home_total_widget,
+            home_widget,
             ram_widget,
             gpu_widget,
             cpu_widget,
