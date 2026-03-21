@@ -16,7 +16,7 @@ local function update()
         volume = helpers.read_command("pactl get-sink-volume @DEFAULT_SINK@ | awk 'NR==1 {print $5}'") or "n/a"
     end
 
-    widget:set_text(string.format("%s | ", volume))
+    widget:set_text(string.format("♪%s | ", volume))
 end
 
 widget:buttons(gears.table.join(
