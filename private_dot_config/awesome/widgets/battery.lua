@@ -1,7 +1,5 @@
-local awful = require("awful")
 local gears = require("gears")
 local naughty = require("naughty")
-local wibox = require("wibox")
 
 local CRITICAL_BATTERY_LEVEL = 15
 local WARNING_THRESHOLD_SECONDS = 300
@@ -10,10 +8,22 @@ local TIMEOUT = 10
 
 local global_last_warning
 local helpers = require("widgets.helpers")
+local battery_text = helpers.new_text_widget()
 local battery_path = helpers.find_battery()
 
-local function has_battery()
-    return battery_path ~= nil
+local function extract_time(status)
+    if status ~= "Discharging" then
+        return ""
+    end
+    local energy = helpers.read_number(battery_path .. "/energy_now")
+    local power = helpers.read_number(battery_path .. "/power_now")
+    if not energy or not power or power <= 0 then
+        return ""
+    end
+    local hours = energy / power
+    local h = math.floor(hours)
+    local m = math.floor((hours - h) * 60)
+    return string.format("(%d:%02d)", h, m)
 end
 
 local function state_symbol(status)
@@ -26,27 +36,6 @@ local function state_symbol(status)
     else
         return "?"
     end
-end
-
-local function extract_time(stdout, status)
-    if status ~= "Discharging" then
-        return ""
-    end
-
-    local h, m = stdout:match("(%d+):(%d+):%d+ remaining")
-    if h and m then
-        return string.format("(%d:%02d)", tonumber(h), tonumber(m))
-    end
-
-    return ""
-end
-
-local function parse_battery(stdout)
-    local status, charge = stdout:match(":%s*([%a%s]+),%s*(%d+)%%")
-    if status then
-        status = status:match("^%s*(.-)%s*$")
-    end
-    return tonumber(charge), status
 end
 
 local function maybe_warn_battery_low(charge, status)
@@ -68,29 +57,26 @@ local function maybe_warn_battery_low(charge, status)
     }
 end
 
-local battery_text = wibox.widget.textbox()
-
-if not has_battery() then
+if not battery_path then
+    battery_text:set_text("")
     return battery_text
 end
 
 local function update_widget()
-    awful.spawn.easy_async("acpi", function(stdout)
-        local charge, status = parse_battery(stdout)
-        if not charge or not status then
-            battery_text.text = ""
-            return
-        end
+    local charge = helpers.read_number(battery_path .. "/capacity")
+    local status = helpers.read_all(battery_path .. "/status")
 
-        battery_text.text = string.format(
-            "BAT %s %d%% %s | ",
-            state_symbol(status),
-            charge,
-            extract_time(stdout, status)
-        )
+    if status then
+        status = status:match("^%s*(.-)%s*$")
+    end
 
-        maybe_warn_battery_low(charge, status)
-    end)
+    if not charge or not status or status == "" then
+        battery_text:set_text("")
+        return
+    end
+
+    battery_text:set_text(string.format("BAT %s %d%% %s | ", state_symbol(status), charge, extract_time(status)))
+    maybe_warn_battery_low(charge, status)
 end
 
 gears.timer {
