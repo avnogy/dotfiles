@@ -4,6 +4,7 @@ local menubar = require("menubar")
 local consts = require("consts")
 local hotkeys_popup = require("awful.hotkeys_popup")
 local brightness = require("brightness")
+local volume = require("widgets.volume")
 local tagkeys = require("bindings.tags")
 local layouts = require("ui.layouts")
 
@@ -106,7 +107,13 @@ local globalkeys = gears.table.join(
     awful.key({}, "XF86MonBrightnessUp", function() brightness.change("5%+") end,
         { description = "increase brightness", group = "launcher" }),
     awful.key({}, "XF86MonBrightnessDown", function() brightness.change("5%-") end,
-        { description = "decrease brightness", group = "launcher" })
+        { description = "decrease brightness", group = "launcher" }),
+    awful.key({}, "XF86AudioRaiseVolume", function() volume.change("+5%") end,
+        { description = "increase volume", group = "launcher" }),
+    awful.key({}, "XF86AudioLowerVolume", function() volume.change("-5%") end,
+        { description = "decrease volume", group = "launcher" }),
+    awful.key({}, "XF86AudioMute", function() volume.toggle_mute() end,
+        { description = "toggle mute", group = "launcher" })
 )
 
 return gears.table.join(globalkeys, tagkeys)
