@@ -7,6 +7,7 @@ local brightness = require("brightness")
 local volume = require("widgets.volume")
 local tagkeys = require("bindings.tags")
 local layouts = require("ui.layouts")
+local client_chooser = require("ui.clients")
 
 require("awful.hotkeys_popup.keys")
 
@@ -52,6 +53,8 @@ local globalkeys = gears.table.join(
             end
         end,
         { description = "go to next client", group = "client" }),
+    awful.key({ consts.modkey }, "Tab", function() client_chooser.choose() end,
+        { description = "choose client", group = "client" }),
 
     -- Standard program
     awful.key({ consts.modkey, "Shift" }, "Return", function() awful.spawn(consts.terminal) end,
