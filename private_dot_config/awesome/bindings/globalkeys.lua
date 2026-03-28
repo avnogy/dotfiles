@@ -44,14 +44,14 @@ local globalkeys = gears.table.join(
         { description = "focus the previous screen", group = "screen" }),
     awful.key({ consts.modkey, }, "u", awful.client.urgent.jumpto,
         { description = "jump to urgent client", group = "client" }),
-    awful.key({ consts.altkey, }, "Tab",
+    awful.key({ consts.altkey }, "Tab",
         function()
-            awful.client.focus.history.previous()
+            awful.client.focus.byidx(1)
             if client.focus then
                 client.focus:raise()
             end
         end,
-        { description = "go back", group = "client" }),
+        { description = "go to next client", group = "client" }),
 
     -- Standard program
     awful.key({ consts.modkey, "Shift" }, "Return", function() awful.spawn(consts.terminal) end,
