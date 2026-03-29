@@ -1,5 +1,5 @@
 local awful = require("awful")
-local chooser_popup = require("ui.chooser_popup")
+local popup_menu = require("ui.popup_menu")
 
 local M = {}
 
@@ -24,32 +24,6 @@ M.available = {
 
 awful.layout.layouts = M.available
 
-local function snapshot_client(client)
-    -- Layout preview can move windows around, so keep enough state to undo it on cancel.
-    return {
-        floating = client.floating,
-        maximized = client.maximized,
-        maximized_horizontal = client.maximized_horizontal,
-        maximized_vertical = client.maximized_vertical,
-        fullscreen = client.fullscreen,
-        geometry = client:geometry(),
-    }
-end
-
-local function restore_client(client, state)
-    -- Restore flags first so geometry writes are not ignored by fullscreen/maximized states.
-    client.floating = state.floating
-    client.maximized = state.maximized
-    client.maximized_horizontal = state.maximized_horizontal
-    client.maximized_vertical = state.maximized_vertical
-    client.fullscreen = state.fullscreen
-
-    if not state.maximized and not state.maximized_horizontal
-        and not state.maximized_vertical and not state.fullscreen then
-        client:geometry(state.geometry)
-    end
-end
-
 function M.choose()
     local screen = awful.screen.focused()
     local tag = screen.selected_tag
@@ -57,203 +31,119 @@ function M.choose()
         return
     end
 
-    local original_layout = awful.layout.get(tag.screen)
-    local current_index = 1
-    local popup
-    local confirmed = false
-    local query = ""
-    local matches = {}
-    local original_clients = {}
-    local original_focus = client.focus
-    local cancel_chooser
+    popup_menu.run {
+        title = "Layout",
+        screen = screen,
+        promptbox = screen.mypromptbox.widget,
+        entries = (function()
+            local entries = {}
 
-    for _, client in ipairs(tag:clients()) do
-        original_clients[client] = snapshot_client(client)
-    end
-
-    for index, layout in ipairs(M.available) do
-        if layout == original_layout then
-            current_index = index
-            break
-        end
-    end
-
-    local function clear_notice()
-        if popup then
-            popup:close()
-            popup = nil
-        end
-    end
-
-    local function stop_prompt()
-        awful.keygrabber.stop()
-        screen.mypromptbox.widget:set_markup("")
-    end
-
-    local function rebuild_matches()
-        local lowered = query:lower()
-        matches = {}
-
-        for index, layout in ipairs(M.available) do
-            local name = awful.layout.getname(layout):lower()
-            if lowered == ""
-                or name == lowered
-                or name:find("^" .. lowered, 1)
-                or name:find(lowered, 1, true) then
-                matches[#matches + 1] = index
+            for _, layout in ipairs(M.available) do
+                entries[#entries + 1] = {
+                    layout = layout,
+                    name = awful.layout.getname(layout),
+                }
             end
-        end
 
-        -- Keep arrow navigation working even when the typed filter has no matches.
-        if #matches == 0 then
-            for index = 1, #M.available do
-                matches[#matches + 1] = index
-            end
-        end
-    end
+            return entries
+        end)(),
+        current_index = (function()
+            local current_layout = awful.layout.get(tag.screen)
 
-    local function show_current()
-        local rows = {}
-
-        for i = 1, #matches do
-            local index = matches[i]
-            rows[#rows + 1] = {
-                text = (index == current_index and "> " or "  ") .. awful.layout.getname(M.available[index]),
-                selected = index == current_index,
-            }
-        end
-
-        if popup then
-            popup:update {
-                title = "Layout",
-                rows = rows,
-            }
-            return
-        end
-
-        popup = chooser_popup.new {
-            title = "Layout",
-            screen = screen,
-            rows = rows,
-            on_cancel = cancel_chooser,
-        }
-    end
-
-    local function restore_focus()
-        if original_focus and original_focus.valid then
-            client.focus = original_focus
-            original_focus:raise()
-        end
-    end
-
-    local function preview_current()
-        -- Preview is live: the selected tag changes immediately while the chooser is open.
-        awful.layout.set(M.available[current_index], tag)
-        restore_focus()
-        show_current()
-    end
-
-    local function restore_original_state()
-        -- Escape should restore both the original layout and the client placement it caused.
-        awful.layout.set(original_layout, tag)
-
-        for client, state in pairs(original_clients) do
-            if client.valid then
-                restore_client(client, state)
-            end
-        end
-
-        restore_focus()
-    end
-
-    cancel_chooser = function()
-        if confirmed then
-            return
-        end
-
-        confirmed = true
-        stop_prompt()
-        restore_original_state()
-        clear_notice()
-    end
-
-    local function step_current(direction)
-        local position = 1
-
-        for i, index in ipairs(matches) do
-            if index == current_index then
-                position = i
-                break
-            end
-        end
-
-        position = position + direction
-        if position < 1 then
-            position = #matches
-        elseif position > #matches then
-            position = 1
-        end
-
-        current_index = matches[position]
-        preview_current()
-    end
-
-    rebuild_matches()
-    preview_current()
-
-    awful.prompt.run {
-        prompt = "Layout [Up/Down, Enter, Esc]: ",
-        textbox = screen.mypromptbox.widget,
-        changed_callback = function(input)
-            -- Typing filters the list and previews the best remaining match.
-            local found = false
-
-            query = input or ""
-            rebuild_matches()
-
-            for _, index in ipairs(matches) do
-                if index == current_index then
-                    found = true
-                    break
+            for index, layout in ipairs(M.available) do
+                if layout == current_layout then
+                    return index
                 end
             end
 
-            if not found then
-                current_index = matches[1]
+            return 1
+        end)(),
+        snapshot = function()
+            -- Layout preview mutates tag layout and can move clients, so capture enough to undo it.
+            local tx = {
+                original_layout = awful.layout.get(tag.screen),
+                original_focus = client.focus,
+                original_clients = {},
+            }
+
+            for _, c in ipairs(tag:clients()) do
+                -- Layout preview can move windows around, so keep enough state to undo it on cancel.
+                tx.original_clients[c] = {
+                    floating = c.floating,
+                    maximized = c.maximized,
+                    maximized_horizontal = c.maximized_horizontal,
+                    maximized_vertical = c.maximized_vertical,
+                    fullscreen = c.fullscreen,
+                    geometry = c:geometry(),
+                }
             end
 
-            preview_current()
+            return tx
         end,
-        keypressed_callback = function(_, key)
-            if key == "Up" or key == "Left" then
-                step_current(-1)
-                return true
+        rollback = function(tx)
+            -- Cancel restores both the original layout and the client state it affected.
+            awful.layout.set(tx.original_layout, tag)
+
+            for c, state in pairs(tx.original_clients) do
+                if c.valid then
+                    -- Restore flags first so geometry writes are not ignored by fullscreen/maximized states.
+                    c.floating = state.floating
+                    c.maximized = state.maximized
+                    c.maximized_horizontal = state.maximized_horizontal
+                    c.maximized_vertical = state.maximized_vertical
+                    c.fullscreen = state.fullscreen
+
+                    if not state.maximized and not state.maximized_horizontal
+                        and not state.maximized_vertical and not state.fullscreen then
+                        c:geometry(state.geometry)
+                    end
+                end
             end
 
-            if key == "Down" or key == "Right" or key == "space" then
-                step_current(1)
-                return true
+            if tx.original_focus and tx.original_focus.valid then
+                client.focus = tx.original_focus
+                tx.original_focus:raise()
             end
-
-            if key == "Escape" then
-                restore_original_state()
-                confirmed = true
-                clear_notice()
-                return false
-            end
-
-            return false
         end,
-        exe_callback = function()
-            confirmed = true
-            restore_focus()
-            clear_notice()
-        end,
-        done_callback = function()
-            clear_notice()
+        recalculate = function(ctx)
+            local lowered = ctx.query:lower()
+            local matches = {}
 
-            if not confirmed then
-                restore_original_state()
+            for _, entry in ipairs(ctx.entries) do
+                local name = entry.name:lower()
+                if lowered == ""
+                    or name == lowered
+                    or name:find("^" .. lowered, 1)
+                    or name:find(lowered, 1, true) then
+                    matches[#matches + 1] = entry
+                end
+            end
+
+            if #matches == 0 then
+                return ctx.entries
+            end
+
+            return matches
+        end,
+        render = function(entry)
+            return {
+                text = entry.name,
+            }
+        end,
+        preview = function(entry, tx)
+            -- Preview is live: selecting an entry applies the layout immediately.
+            awful.layout.set(entry.layout, tag)
+
+            if tx.original_focus and tx.original_focus.valid then
+                client.focus = tx.original_focus
+                tx.original_focus:raise()
+            end
+        end,
+        commit = function(_, tx)
+            -- Commit keeps the selected layout; only focus needs to be restored.
+            if tx.original_focus and tx.original_focus.valid then
+                client.focus = tx.original_focus
+                tx.original_focus:raise()
             end
         end,
     }

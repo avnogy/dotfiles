@@ -54,12 +54,22 @@ theme.taglist_squares_unsel                     = theme_assets.taglist_squares_u
 -- notification_[width|height|margin]
 -- notification_[border_color|border_width|shape|opacity]
 
--- Variables set for theming the menu:
+-- Variables set for theming Awesome's built-in menu:
 -- menu_[bg|fg]_[normal|focus]
 -- menu_[border_color|border_width]
 theme.menu_submenu_icon                         = themes_path .. "default/submenu.png"
 theme.menu_height                               = dpi(15)
 theme.menu_width                                = dpi(100)
+
+-- Variables set for theming the custom popup menu chooser:
+theme.popup_menu_width                          = dpi(420)
+theme.popup_menu_padding                        = dpi(20)
+theme.popup_menu_spacing                        = dpi(16)
+theme.popup_menu_item_spacing                   = dpi(6)
+theme.popup_menu_item_height                    = dpi(24)
+theme.popup_menu_header_height                  = dpi(18)
+theme.popup_menu_item_padding                   = dpi(8)
+theme.popup_menu_backdrop_bg                    = "#00000000"
 
 -- You can add as many variables as
 -- you wish and access them by using
