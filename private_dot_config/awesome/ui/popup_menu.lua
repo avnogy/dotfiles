@@ -365,6 +365,22 @@ function M.new(args)
         awful.prompt.run {
             prompt = self.prompt,
             textbox = self.promptbox,
+            hooks = {
+                {
+                    {},
+                    "space",
+                    function(command)
+                        return command
+                    end,
+                },
+                {
+                    {},
+                    " ",
+                    function(command)
+                        return command
+                    end,
+                },
+            },
             changed_callback = function(input)
                 self.query = input or ""
                 self:sync_after_query_change()
@@ -378,11 +394,6 @@ function M.new(args)
 
                 if key == "Down" or key == "Right" then
                     self:step(1)
-                    return true
-                end
-
-                if key == "space" then
-                    self:confirm_current()
                     return true
                 end
 
