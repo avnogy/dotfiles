@@ -35,6 +35,9 @@ function M.choose()
         title = "Layout",
         screen = screen,
         promptbox = screen.mypromptbox.widget,
+        advance_keys = {
+            { modifiers = { "Mod4" }, key = "space" },
+        },
         entries = (function()
             local entries = {}
 

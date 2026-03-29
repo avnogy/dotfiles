@@ -170,6 +170,30 @@ local function normalize_rendered_item(rendered)
     return rendered
 end
 
+local function key_matches(binding_key, key)
+    if binding_key == key then
+        return true
+    end
+
+    return binding_key == "space" and key == " "
+end
+
+local function binding_matches(mod, key, binding)
+    local modifiers = binding.modifiers or {}
+
+    if not key_matches(binding.key, key) then
+        return false
+    end
+
+    for _, modifier in ipairs(modifiers) do
+        if not mod[modifier] then
+            return false
+        end
+    end
+
+    return true
+end
+
 local function default_recalculate(ctx)
     -- Rebuild the visible entry list from the current query.
     local entries = {}
@@ -201,6 +225,7 @@ function M.new(args)
         screen = args.screen or awful.screen.focused(),
         title = args.title,
         prompt = (args.prompt_title or args.title) .. ": ",
+        advance_keys = args.advance_keys or {},
         query = args.query or "",
         current_index = args.current_index or 1,
         fallback_to_all = args.fallback_to_all ~= false,
@@ -362,31 +387,40 @@ function M.new(args)
         self:rebuild()
         self:preview_current()
 
+        local hooks = {
+            {
+                {},
+                "space",
+                function(command)
+                    return command
+                end,
+            },
+            {
+                {},
+                " ",
+                function(command)
+                    return command
+                end,
+            },
+        }
+
         awful.prompt.run {
             prompt = self.prompt,
             textbox = self.promptbox,
-            hooks = {
-                {
-                    {},
-                    "space",
-                    function(command)
-                        return command
-                    end,
-                },
-                {
-                    {},
-                    " ",
-                    function(command)
-                        return command
-                    end,
-                },
-            },
+            hooks = hooks,
             changed_callback = function(input)
                 self.query = input or ""
                 self:sync_after_query_change()
                 self:preview_current()
             end,
-            keypressed_callback = function(_, key)
+            keypressed_callback = function(mod, key)
+                for _, binding in ipairs(self.advance_keys) do
+                    if binding_matches(mod, key, binding) then
+                        self:step(binding.direction or 1)
+                        return true
+                    end
+                end
+
                 if key == "Up" or key == "Left" then
                     self:step(-1)
                     return true

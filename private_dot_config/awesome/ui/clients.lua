@@ -13,6 +13,9 @@ function M.choose()
         title = "Clients",
         screen = screen,
         promptbox = screen.mypromptbox.widget,
+        advance_keys = {
+            { modifiers = { "Mod4" }, key = "Tab" },
+        },
         entries = (function()
             local entries = {}
 
