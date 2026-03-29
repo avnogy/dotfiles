@@ -12,8 +12,15 @@ local popup_spacing = dpi(16)
 local row_height = dpi(24)
 local header_height = dpi(18)
 
+local function popup_height_for_rows(row_count)
+    return (popup_padding * 2)
+        + header_height
+        + popup_spacing
+        + (row_count * row_height)
+end
+
 local function build_row(text, selected)
-    local row = wibox.widget {
+    local content = wibox.widget {
         {
             text = text,
             widget = wibox.widget.textbox,
@@ -27,12 +34,12 @@ local function build_row(text, selected)
     }
 
     if not selected then
-        return row
+        return content
     end
 
     return wibox.widget {
         {
-            row,
+            content,
             forced_height = row_height,
             widget = wibox.container.constraint,
         },
@@ -44,23 +51,56 @@ local function build_row(text, selected)
     }
 end
 
+local function build_backdrops(on_cancel)
+    local backdrops = {}
+    local buttons
+
+    if on_cancel then
+        buttons = gears.table.join(
+            awful.button({}, 1, on_cancel),
+            awful.button({}, 2, on_cancel),
+            awful.button({}, 3, on_cancel)
+        )
+    end
+
+    for s in screen do
+        local backdrop = wibox {
+            screen = s,
+            visible = true,
+            ontop = true,
+            bg = "#00000000",
+            x = s.geometry.x,
+            y = s.geometry.y,
+            width = s.geometry.width,
+            height = s.geometry.height,
+            widget = wibox.container.background(),
+        }
+
+        if buttons then
+            backdrop:buttons(buttons)
+        end
+
+        backdrops[#backdrops + 1] = backdrop
+    end
+
+    return backdrops
+end
+
 function M.new(args)
-    local screen = args.screen
-    local popup_height = (popup_padding * 2)
-        + header_height
-        + popup_spacing
-        + (#args.rows * row_height)
+    local target_screen = args.screen
     local rows = wibox.widget {
         spacing = dpi(6),
         layout = wibox.layout.fixed.vertical,
     }
+    local title = wibox.widget {
+        markup = "<b>" .. args.title .. "</b>",
+        widget = wibox.widget.textbox,
+        font = beautiful.font,
+    }
+    local backdrops = build_backdrops(args.on_cancel)
 
-    for _, row in ipairs(args.rows) do
-        rows:add(build_row(row.text, row.selected))
-    end
-
-    return awful.popup {
-        screen = screen,
+    local popup = awful.popup {
+        screen = target_screen,
         visible = true,
         ontop = true,
         border_width = beautiful.border_width,
@@ -68,17 +108,13 @@ function M.new(args)
         bg = beautiful.bg_focus,
         fg = beautiful.fg_focus,
         minimum_width = popup_width,
-        minimum_height = popup_height,
+        minimum_height = popup_height_for_rows(#args.rows),
         maximum_width = popup_width,
-        maximum_height = popup_height,
+        maximum_height = popup_height_for_rows(#args.rows),
         placement = awful.placement.centered,
         widget = {
             {
-                {
-                    markup = "<b>" .. args.title .. "</b>",
-                    widget = wibox.widget.textbox,
-                    font = beautiful.font,
-                },
+                title,
                 rows,
                 spacing = popup_spacing,
                 layout = wibox.layout.fixed.vertical,
@@ -87,6 +123,32 @@ function M.new(args)
             widget = wibox.container.margin,
         },
     }
+
+    function popup:update(update_args)
+        local new_rows = update_args.rows or {}
+        local popup_height = popup_height_for_rows(#new_rows)
+
+        title.markup = "<b>" .. (update_args.title or args.title) .. "</b>"
+        rows:reset()
+
+        for _, row in ipairs(new_rows) do
+            rows:add(build_row(row.text, row.selected))
+        end
+
+        self.minimum_height = popup_height
+        self.maximum_height = popup_height
+    end
+
+    function popup:close()
+        self.visible = false
+        for _, backdrop in ipairs(backdrops) do
+            backdrop.visible = false
+        end
+    end
+
+    popup:update(args)
+
+    return popup
 end
 
 return M

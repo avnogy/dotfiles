@@ -27,12 +27,18 @@ function M.choose()
     local confirmed = false
     local query = ""
     local matches = {}
+    local cancel_chooser
 
     local function clear_notice()
         if popup then
-            popup.visible = false
+            popup:close()
             popup = nil
         end
+    end
+
+    local function stop_prompt()
+        awful.keygrabber.stop()
+        screen.mypromptbox.widget:set_markup("")
     end
 
     local function rebuild_matches()
@@ -76,11 +82,19 @@ function M.choose()
             }
         end
 
-        clear_notice()
+        if popup then
+            popup:update {
+                title = "Clients",
+                rows = rows,
+            }
+            return
+        end
+
         popup = chooser_popup.new {
             title = "Clients",
             screen = screen,
             rows = rows,
+            on_cancel = cancel_chooser,
         }
     end
 
@@ -103,6 +117,21 @@ function M.choose()
 
         current_index = matches[position]
         show_current()
+    end
+
+    cancel_chooser = function()
+        if confirmed then
+            return
+        end
+
+        confirmed = true
+        stop_prompt()
+        clear_notice()
+
+        if original_focus and original_focus.valid then
+            client.focus = original_focus
+            original_focus:raise()
+        end
     end
 
     rebuild_matches()

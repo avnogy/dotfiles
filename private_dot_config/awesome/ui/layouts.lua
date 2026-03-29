@@ -65,6 +65,7 @@ function M.choose()
     local matches = {}
     local original_clients = {}
     local original_focus = client.focus
+    local cancel_chooser
 
     for _, client in ipairs(tag:clients()) do
         original_clients[client] = snapshot_client(client)
@@ -79,9 +80,14 @@ function M.choose()
 
     local function clear_notice()
         if popup then
-            popup.visible = false
+            popup:close()
             popup = nil
         end
+    end
+
+    local function stop_prompt()
+        awful.keygrabber.stop()
+        screen.mypromptbox.widget:set_markup("")
     end
 
     local function rebuild_matches()
@@ -117,11 +123,19 @@ function M.choose()
             }
         end
 
-        clear_notice()
+        if popup then
+            popup:update {
+                title = "Layout",
+                rows = rows,
+            }
+            return
+        end
+
         popup = chooser_popup.new {
             title = "Layout",
             screen = screen,
             rows = rows,
+            on_cancel = cancel_chooser,
         }
     end
 
@@ -150,6 +164,17 @@ function M.choose()
         end
 
         restore_focus()
+    end
+
+    cancel_chooser = function()
+        if confirmed then
+            return
+        end
+
+        confirmed = true
+        stop_prompt()
+        restore_original_state()
+        clear_notice()
     end
 
     local function step_current(direction)
