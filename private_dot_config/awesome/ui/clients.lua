@@ -5,14 +5,9 @@ local M = {}
 
 function M.choose()
     local screen = awful.screen.focused()
-    local tag = screen.selected_tag
-    if not tag then
-        return
-    end
-
     local clients = {}
-    for _, c in ipairs(screen.clients) do
-        if not c.hidden and not c.minimized then
+    for _, c in ipairs(client.get()) do
+        if c.valid then
             clients[#clients + 1] = c
         end
     end
@@ -73,8 +68,16 @@ function M.choose()
             local idx = matches[i]
             local c = clients[idx]
             local title = c.name or c.class or "Unknown"
+            local tag_name = nil
+            local first_tag = c.first_tag
+            if first_tag then
+                tag_name = first_tag.name
+            end
             if #title > 40 then
                 title = title:sub(1, 37) .. "..."
+            end
+            if tag_name and tag_name ~= "" then
+                title = string.format("%s [%s]", title, tag_name)
             end
             rows[#rows + 1] = {
                 text = (idx == current_index and "> " or "  ") .. title,
@@ -186,8 +189,7 @@ function M.choose()
             clear_notice()
             local c = clients[current_index]
             if c and c.valid then
-                client.focus = c
-                c:raise()
+                c:jump_to(false)
             end
         end,
         done_callback = function()
