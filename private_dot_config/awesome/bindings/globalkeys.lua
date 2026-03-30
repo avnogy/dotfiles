@@ -8,6 +8,7 @@ local volume = require("widgets.volume")
 local tagkeys = require("bindings.tags")
 local layouts = require("ui.layouts")
 local client_chooser = require("ui.clients")
+local sysactions = require("ui.sysactions")
 
 require("awful.hotkeys_popup.keys")
 
@@ -103,7 +104,7 @@ local globalkeys = gears.table.join(
         { description = "open chrome", group = "launcher" }),
     awful.key({ consts.modkey }, "m", function() awful.spawn(consts.terminal .. " -e pulsemixer") end,
         { description = "open pulsemixer tui", group = "launcher" }),
-    awful.key({ consts.modkey, "Shift" }, "BackSpace", function() awful.spawn(".scripts/sysact.sh") end,
+    awful.key({ consts.modkey, "Shift" }, "BackSpace", sysactions.choose,
         { description = "open system action menu", group = "launcher" }),
     awful.key({ consts.modkey }, "v", function() awful.spawn("clipmenu") end,
         { description = "open paste history menu", group = "launcher" }),
