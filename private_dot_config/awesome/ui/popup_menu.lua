@@ -153,8 +153,13 @@ end
 
 local function default_match(entry, query)
     -- Default filtering matches against the entry's text field.
-    local text = (entry.text or ""):lower()
+    local text = entry._popup_menu_match_text or entry.match_text
     local lowered = query:lower()
+
+    if not text then
+        text = (entry._popup_menu_text or entry.text or ""):lower()
+        entry._popup_menu_match_text = text
+    end
 
     return lowered == ""
         or text == lowered
@@ -229,9 +234,8 @@ function M.new(args)
         query = args.query or "",
         current_index = args.current_index or 1,
         fallback_to_all = args.fallback_to_all ~= false,
-        render = args.render or function(entry)
-            return { text = entry.text or "" }
-        end,
+        text = args.text or function(entry) return entry.text or "" end,
+        render = args.render,
         matcher = args.matcher or default_match,
         recalculate = args.recalculate or default_recalculate,
         preview = args.preview,
@@ -263,7 +267,10 @@ function M.new(args)
         local items = {}
 
         for index, entry in ipairs(self.active_entries) do
-            local item = normalize_rendered_item(self.render(entry, index == self.current_index, self))
+            local item = normalize_rendered_item(
+                (self.render and self.render(entry, index == self.current_index, self))
+                    or { text = entry._popup_menu_text or entry.text or "" }
+            )
             item.selected = index == self.current_index
             items[#items + 1] = item
         end
@@ -301,6 +308,10 @@ function M.new(args)
 
     function chooser:rebuild()
         -- Recalculate visible entries and clamp the current selection.
+        for _, entry in ipairs(self.entries) do
+            entry._popup_menu_text = entry._popup_menu_text or self.text(entry, self)
+        end
+
         self.active_entries = self.recalculate(self) or {}
         if #self.active_entries == 0 then
             self.current_index = 1

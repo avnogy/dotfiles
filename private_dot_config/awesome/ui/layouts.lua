@@ -42,14 +42,18 @@ function M.choose()
             local entries = {}
 
             for _, layout in ipairs(M.available) do
+                local name = awful.layout.getname(layout)
                 entries[#entries + 1] = {
                     layout = layout,
-                    name = awful.layout.getname(layout),
+                    name = name,
                 }
             end
 
             return entries
         end)(),
+        text = function(entry)
+            return entry.name
+        end,
         current_index = (function()
             local current_layout = awful.layout.get(tag.screen)
 
@@ -107,31 +111,6 @@ function M.choose()
                 client.focus = tx.original_focus
                 tx.original_focus:raise()
             end
-        end,
-        recalculate = function(ctx)
-            local lowered = ctx.query:lower()
-            local matches = {}
-
-            for _, entry in ipairs(ctx.entries) do
-                local name = entry.name:lower()
-                if lowered == ""
-                    or name == lowered
-                    or name:find("^" .. lowered, 1)
-                    or name:find(lowered, 1, true) then
-                    matches[#matches + 1] = entry
-                end
-            end
-
-            if #matches == 0 then
-                return ctx.entries
-            end
-
-            return matches
-        end,
-        render = function(entry)
-            return {
-                text = entry.name,
-            }
         end,
         preview = function(entry, tx)
             -- Preview is live: selecting an entry applies the layout immediately.
