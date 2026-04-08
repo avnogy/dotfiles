@@ -27,7 +27,12 @@ local clientkeys = gears.table.join(
             -- minimized, since minimized clients can't have the focus.
             c.minimized = true
         end,
-        { description = "minimize", group = "client" })
-)
+        { description = "minimize", group = "client" }),
+    awful.key({ consts.modkey, "Shift" }, "space", function(c)
+        c.floating = false
+        awful.layout.arrange(c.screen)
+    end,
+    {description = "force tiled", group = "client"})
+    )
 
 return clientkeys
