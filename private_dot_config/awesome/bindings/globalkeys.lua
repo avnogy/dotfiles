@@ -13,111 +13,125 @@ local sysactions = require("ui.sysactions")
 require("awful.hotkeys_popup.keys")
 
 local globalkeys = gears.table.join(
-    awful.key({ consts.modkey, "Shift" }, "/", hotkeys_popup.show_help,
-        { description = "show help", group = "awesome" }),
-    awful.key({ consts.modkey, }, "Left", awful.tag.viewprev,
-        { description = "view previous", group = "tag" }),
-    awful.key({ consts.modkey, }, "Right", awful.tag.viewnext,
-        { description = "view next", group = "tag" }),
-    awful.key({ consts.modkey, }, "Escape", awful.tag.history.restore,
-        { description = "go back", group = "tag" }),
+	awful.key(
+		{ consts.modkey, "Shift" },
+		"/",
+		hotkeys_popup.show_help,
+		{ description = "show help", group = "awesome" }
+	),
+	awful.key({ consts.modkey }, "Left", awful.tag.viewprev, { description = "view previous", group = "tag" }),
+	awful.key({ consts.modkey }, "Right", awful.tag.viewnext, { description = "view next", group = "tag" }),
+	awful.key({ consts.modkey }, "Escape", awful.tag.history.restore, { description = "go back", group = "tag" }),
 
-    awful.key({ consts.modkey, }, "j",
-        function()
-            awful.client.focus.byidx(1)
-        end,
-        { description = "focus next by index", group = "client" }
-    ),
-    awful.key({ consts.modkey, }, "k",
-        function()
-            awful.client.focus.byidx(-1)
-        end,
-        { description = "focus previous by index", group = "client" }
-    ),
+	awful.key({ consts.modkey }, "j", function()
+		awful.client.focus.byidx(1)
+	end, { description = "focus next by index", group = "client" }),
+	awful.key({ consts.modkey }, "k", function()
+		awful.client.focus.byidx(-1)
+	end, { description = "focus previous by index", group = "client" }),
 
-    -- Layout manipulation
-    awful.key({ consts.modkey, "Shift" }, "j", function() awful.client.swap.byidx(1) end,
-        { description = "swap with next client by index", group = "client" }),
-    awful.key({ consts.modkey, "Shift" }, "k", function() awful.client.swap.byidx(-1) end,
-        { description = "swap with previous client by index", group = "client" }),
-    awful.key({ consts.modkey, "Control" }, "j", function() awful.screen.focus_relative(1) end,
-        { description = "focus the next screen", group = "screen" }),
-    awful.key({ consts.modkey, "Control" }, "k", function() awful.screen.focus_relative(-1) end,
-        { description = "focus the previous screen", group = "screen" }),
-    awful.key({ consts.modkey, }, "u", awful.client.urgent.jumpto,
-        { description = "jump to urgent client", group = "client" }),
-    awful.key({ consts.altkey }, "Tab",
-        function()
-            awful.client.focus.byidx(1)
-            if client.focus then
-                client.focus:raise()
-            end
-        end,
-        { description = "go to next client", group = "client" }),
-    awful.key({ consts.modkey }, "Tab", function() client_chooser.choose() end,
-        { description = "choose client", group = "client" }),
+	-- Layout manipulation
+	awful.key({ consts.modkey, "Shift" }, "j", function()
+		awful.client.swap.byidx(1)
+	end, { description = "swap with next client by index", group = "client" }),
+	awful.key({ consts.modkey, "Shift" }, "k", function()
+		awful.client.swap.byidx(-1)
+	end, { description = "swap with previous client by index", group = "client" }),
+	awful.key({ consts.modkey, "Control" }, "j", function()
+		awful.screen.focus_relative(1)
+	end, { description = "focus the next screen", group = "screen" }),
+	awful.key({ consts.modkey, "Control" }, "k", function()
+		awful.screen.focus_relative(-1)
+	end, { description = "focus the previous screen", group = "screen" }),
+	awful.key(
+		{ consts.modkey },
+		"u",
+		awful.client.urgent.jumpto,
+		{ description = "jump to urgent client", group = "client" }
+	),
+	awful.key({ consts.altkey }, "Tab", function()
+		awful.client.focus.byidx(1)
+		if client.focus then
+			client.focus:raise()
+		end
+	end, { description = "go to next client", group = "client" }),
+	awful.key({ consts.modkey }, "Tab", function()
+		client_chooser.choose()
+	end, { description = "choose client", group = "client" }),
 
-    -- Standard program
-    awful.key({ consts.modkey, "Shift" }, "Return", function() awful.spawn(consts.terminal) end,
-        { description = "open a terminal", group = "launcher" }),
-    awful.key({ consts.modkey, "Control" }, "r", awesome.restart,
-        { description = "reload awesome", group = "awesome" }),
-    awful.key({ consts.modkey, "Shift" }, "q", awesome.quit,
-        { description = "quit awesome", group = "awesome" }),
-    awful.key({ consts.modkey, }, "l", function() awful.tag.incmwfact(0.05) end,
-        { description = "increase master width factor", group = "layout" }),
-    awful.key({ consts.modkey, }, "h", function() awful.tag.incmwfact(-0.05) end,
-        { description = "decrease master width factor", group = "layout" }),
-    awful.key({ consts.modkey, "Shift" }, "h", function() awful.tag.incnmaster(1, nil, true) end,
-        { description = "increase the number of master clients", group = "layout" }),
-    awful.key({ consts.modkey, "Shift" }, "l", function() awful.tag.incnmaster(-1, nil, true) end,
-        { description = "decrease the number of master clients", group = "layout" }),
-    awful.key({ consts.modkey, "Control" }, "h", function() awful.tag.incncol(1, nil, true) end,
-        { description = "increase the number of columns", group = "layout" }),
-    awful.key({ consts.modkey, "Control" }, "l", function() awful.tag.incncol(-1, nil, true) end,
-        { description = "decrease the number of columns", group = "layout" }),
-    awful.key({ consts.modkey, }, "space", layouts.choose,
-        { description = "choose layout", group = "layout" }),
+	-- Standard program
+	awful.key({ consts.modkey, "Shift" }, "Return", function()
+		awful.spawn(consts.terminal)
+	end, { description = "open a terminal", group = "launcher" }),
+	awful.key({ consts.modkey, "Control" }, "r", awesome.restart, { description = "reload awesome", group = "awesome" }),
+	awful.key({ consts.modkey, "Shift" }, "q", awesome.quit, { description = "quit awesome", group = "awesome" }),
+	awful.key({ consts.modkey }, "l", function()
+		awful.tag.incmwfact(0.05)
+	end, { description = "increase master width factor", group = "layout" }),
+	awful.key({ consts.modkey }, "h", function()
+		awful.tag.incmwfact(-0.05)
+	end, { description = "decrease master width factor", group = "layout" }),
+	awful.key({ consts.modkey, "Shift" }, "h", function()
+		awful.tag.incnmaster(1, nil, true)
+	end, { description = "increase the number of master clients", group = "layout" }),
+	awful.key({ consts.modkey, "Shift" }, "l", function()
+		awful.tag.incnmaster(-1, nil, true)
+	end, { description = "decrease the number of master clients", group = "layout" }),
+	awful.key({ consts.modkey, "Control" }, "h", function()
+		awful.tag.incncol(1, nil, true)
+	end, { description = "increase the number of columns", group = "layout" }),
+	awful.key({ consts.modkey, "Control" }, "l", function()
+		awful.tag.incncol(-1, nil, true)
+	end, { description = "decrease the number of columns", group = "layout" }),
+	awful.key({ consts.modkey }, "space", layouts.choose, { description = "choose layout", group = "layout" }),
 
-    awful.key({ consts.modkey, "Control" }, "n",
-        function()
-            local c = awful.client.restore()
-            -- Focus restored client
-            if c then
-                c:emit_signal(
-                    "request::activate", "key.unminimize", { raise = true }
-                )
-            end
-        end,
-        { description = "restore minimized", group = "client" }),
+	awful.key({ consts.modkey, "Control" }, "n", function()
+		local c = awful.client.restore()
+		-- Focus restored client
+		if c then
+			c:emit_signal("request::activate", "key.unminimize", { raise = true })
+		end
+	end, { description = "restore minimized", group = "client" }),
 
-    -- Menubar
-    awful.key({ consts.modkey }, "p", function() menubar.show() end,
-        { description = "show the menubar", group = "launcher" }),
+	-- Menubar
+	awful.key({ consts.modkey }, "p", function()
+		menubar.show()
+	end, { description = "show the menubar", group = "launcher" }),
 
-    -- Other Keybinds
-    awful.key({ consts.modkey }, "s", function() awful.spawn("spotify") end,
-        { description = "open spotify", group = "launcher" }),
-    awful.key({ consts.modkey }, "c", function()
-        awful.spawn({ "google-chrome-stable", "--disable-background-mode" })
-    end,
-        { description = "open chrome", group = "launcher" }),
-    awful.key({ consts.modkey }, "m", function() awful.spawn(consts.terminal .. " -e pulsemixer") end,
-        { description = "open pulsemixer tui", group = "launcher" }),
-    awful.key({ consts.modkey, "Shift" }, "BackSpace", sysactions.choose,
-        { description = "open system action menu", group = "launcher" }),
-    awful.key({ consts.modkey }, "v", function() awful.spawn("clipmenu") end,
-        { description = "open paste history menu", group = "launcher" }),
-    awful.key({}, "XF86MonBrightnessUp", function() brightness.change("5%+") end,
-        { description = "increase brightness", group = "launcher" }),
-    awful.key({}, "XF86MonBrightnessDown", function() brightness.change("5%-") end,
-        { description = "decrease brightness", group = "launcher" }),
-    awful.key({}, "XF86AudioRaiseVolume", function() volume.change("+5%") end,
-        { description = "increase volume", group = "launcher" }),
-    awful.key({}, "XF86AudioLowerVolume", function() volume.change("-5%") end,
-        { description = "decrease volume", group = "launcher" }),
-    awful.key({}, "XF86AudioMute", function() volume.toggle_mute() end,
-        { description = "toggle mute", group = "launcher" })
+	-- Other Keybinds
+	awful.key({ consts.modkey }, "s", function()
+		awful.spawn("spotify")
+	end, { description = "open spotify", group = "launcher" }),
+	awful.key({ consts.modkey }, "c", function()
+		awful.spawn({ "google-chrome-stable", "--disable-background-mode" })
+	end, { description = "open chrome", group = "launcher" }),
+	awful.key({ consts.modkey }, "m", function()
+		awful.spawn(consts.terminal .. " -e pulsemixer")
+	end, { description = "open pulsemixer tui", group = "launcher" }),
+	awful.key(
+		{ consts.modkey, "Shift" },
+		"BackSpace",
+		sysactions.choose,
+		{ description = "open system action menu", group = "launcher" }
+	),
+	awful.key({ consts.modkey }, "v", function()
+		awful.spawn("clipmenu")
+	end, { description = "open paste history menu", group = "launcher" }),
+	awful.key({}, "XF86MonBrightnessUp", function()
+		brightness.change("5%+")
+	end, { description = "increase brightness", group = "launcher" }),
+	awful.key({}, "XF86MonBrightnessDown", function()
+		brightness.change("5%-")
+	end, { description = "decrease brightness", group = "launcher" }),
+	awful.key({}, "XF86AudioRaiseVolume", function()
+		volume.change("+5%")
+	end, { description = "increase volume", group = "launcher" }),
+	awful.key({}, "XF86AudioLowerVolume", function()
+		volume.change("-5%")
+	end, { description = "decrease volume", group = "launcher" }),
+	awful.key({}, "XF86AudioMute", function()
+		volume.toggle_mute()
+	end, { description = "toggle mute", group = "launcher" })
 )
 
 return gears.table.join(globalkeys, tagkeys)

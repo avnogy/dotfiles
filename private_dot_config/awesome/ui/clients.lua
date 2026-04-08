@@ -8,7 +8,7 @@ local function get_process_name(c)
         return nil
     end
 
-    local proc_comm = io.open(string.format("/proc/%d/comm", c.pid), "r")
+	local proc_comm = io.open(string.format("/proc/%d/comm", c.pid), "r")
     if not proc_comm then
         return nil
     end
