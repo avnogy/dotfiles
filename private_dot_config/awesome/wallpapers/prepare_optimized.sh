@@ -4,9 +4,7 @@ set -euo pipefail
 max_width="${MAX_WIDTH:-2560}"
 max_height="${MAX_HEIGHT:-1440}"
 jpg_quality="${JPG_QUALITY:-88}"
-preview_size="${PREVIEW_SIZE:-512x512>}"
 wal_cache_dir="${XDG_CACHE_HOME:-$HOME/.cache}/wal"
-preview_cache_dir="${wal_cache_dir}/preview"
 palette_cache_dir="${wal_cache_dir}/awesome-palettes"
 
 script_dir="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
@@ -15,23 +13,20 @@ output_dir="${script_dir}/optimized"
 
 mkdir -p "${originals_dir}"
 mkdir -p "${output_dir}"
-mkdir -p "${preview_cache_dir}"
 mkdir -p "${palette_cache_dir}"
 
 rm -f "${output_dir}"/*.jpg "${output_dir}"/*.jpeg "${output_dir}"/*.png "${output_dir}"/*.webp
-rm -f "${preview_cache_dir}"/*.jpg
 rm -f "${palette_cache_dir}"/full-*.sh "${palette_cache_dir}"/preview-*.sh
 
 shopt -s nullglob
 
 cache_wal_palette() {
 	local source="$1"
-	local prefix="$2"
 	local name
 	name="$(basename -- "${source}")"
 
 	wal -q -n -i "${source}"
-	cp "${wal_cache_dir}/colors.sh" "${palette_cache_dir}/${prefix}-${name}.sh"
+	cp "${wal_cache_dir}/colors.sh" "${palette_cache_dir}/full-${name}.sh"
 }
 
 optimized_name() {
@@ -76,11 +71,7 @@ for source in "${originals_dir}"/*; do
 		-quality "${jpg_quality}" \
 		"${target}"
 
-	cache_wal_palette "${target}" "full"
-
-	preview_target="${preview_cache_dir}/$(basename -- "${target}")"
-	magick "${target}" -resize "${preview_size}" "${preview_target}"
-	cache_wal_palette "${preview_target}" "preview"
+	cache_wal_palette "${target}"
 
 	printf 'optimized %s -> %s\n' "${name}" "$(basename -- "${target}")"
 done

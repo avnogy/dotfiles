@@ -86,9 +86,8 @@ function M.apply_current(screen_obj)
 end
 
 function M.persist(path)
-	local file = io.open(state_path, "w")
-
 	os.execute("mkdir -p " .. "'" .. state_dir:gsub("'", [['"'"']]) .. "'")
+	local file = io.open(state_path, "w")
 	if not file then
 		return false
 	end
@@ -150,7 +149,7 @@ function M.choose()
 			end
 		end,
 		preview = function(entry)
-			theme.apply(entry.path, { preview = true })
+			theme.apply(entry.path)
 		end,
 		commit = function(entry)
 			M.persist(entry.path)

@@ -70,13 +70,13 @@ local function mix(first, second, ratio)
 	return result
 end
 
-function M.build(wallpaper_path, opts)
+function M.build(wallpaper_path)
 	if not wallpaper_path then
 		wallpaper_path = require("ui.wallpaper").current()
 	end
 
 	local theme = dofile(themes_path .. "default/theme.lua")
-	local colors = wal.colors(wallpaper_path, opts)
+	local colors = wal.colors(wallpaper_path)
 	local base_bg = colors.background or xrdb.background or "#1a1a1a"
 	local base_fg = colors.foreground or xrdb.foreground or "#d0d0d0"
 	local accent = colors.color4 or colors.color12 or xrdb.color4 or xrdb.color12 or "#5f87ff"
@@ -227,9 +227,10 @@ local function refresh_ui()
 	end
 end
 
-function M.apply(wallpaper_path, opts)
-	wal.apply(wallpaper_path, opts)
-	beautiful.init(M.build(wallpaper_path, opts))
+function M.apply(wallpaper_path)
+	wallpaper_path = wallpaper_path or require("ui.wallpaper").current()
+	wal.apply(wallpaper_path)
+	beautiful.init(M.build(wallpaper_path))
 	require("ui.wallpaper").apply(wallpaper_path)
 	refresh_ui()
 	gears.timer.delayed_call(function()
