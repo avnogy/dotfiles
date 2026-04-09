@@ -9,6 +9,7 @@ local tagkeys = require("bindings.tags")
 local layouts = require("ui.layouts")
 local client_chooser = require("ui.clients")
 local sysactions = require("ui.sysactions")
+local wallpaper = require("ui.wallpaper")
 
 require("awful.hotkeys_popup.keys")
 
@@ -84,6 +85,12 @@ local globalkeys = gears.table.join(
 		awful.tag.incncol(-1, nil, true)
 	end, { description = "decrease the number of columns", group = "layout" }),
 	awful.key({ consts.modkey }, "space", layouts.choose, { description = "choose layout", group = "layout" }),
+	awful.key(
+		{ consts.modkey, "Shift" },
+		"t",
+		wallpaper.choose,
+		{ description = "choose wallpaper", group = "launcher" }
+	),
 
 	awful.key({ consts.modkey, "Control" }, "n", function()
 		local c = awful.client.restore()

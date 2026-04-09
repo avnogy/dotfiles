@@ -5,19 +5,13 @@ local wibox = require("wibox")
 
 local M = {}
 
-local popup_width = beautiful.popup_menu_width
-local popup_padding = beautiful.popup_menu_padding
-local popup_spacing = beautiful.popup_menu_spacing
-local item_spacing = beautiful.popup_menu_item_spacing
-local item_height = beautiful.popup_menu_item_height
-local header_height = beautiful.popup_menu_header_height
-local item_padding = beautiful.popup_menu_item_padding
-
-local function popup_height_for_items(item_count)
+local function popup_height_for_items(item_count, popup_padding, header_height, popup_spacing, item_height)
 	return (popup_padding * 2) + header_height + popup_spacing + (item_count * item_height)
 end
 
 local function build_item(item)
+	local item_padding = beautiful.popup_menu_item_padding
+	local item_height = beautiful.popup_menu_item_height
 	local content = wibox.widget({
 		{
 			text = item.text,
@@ -87,6 +81,13 @@ local function build_backdrops(on_cancel)
 end
 
 local function build_popup(args)
+	local popup_width = beautiful.popup_menu_width
+	local popup_padding = beautiful.popup_menu_padding
+	local popup_spacing = beautiful.popup_menu_spacing
+	local item_spacing = beautiful.popup_menu_item_spacing
+	local item_height = beautiful.popup_menu_item_height
+	local header_height = beautiful.popup_menu_header_height
+	local last_update_args = nil
 	local items_widget = wibox.widget({
 		spacing = item_spacing,
 		layout = wibox.layout.fixed.vertical,
@@ -107,9 +108,9 @@ local function build_popup(args)
 		bg = beautiful.popup_menu_bg,
 		fg = beautiful.popup_menu_fg,
 		minimum_width = popup_width,
-		minimum_height = popup_height_for_items(0),
+		minimum_height = popup_height_for_items(0, popup_padding, header_height, popup_spacing, item_height),
 		maximum_width = popup_width,
-		maximum_height = popup_height_for_items(0),
+		maximum_height = popup_height_for_items(0, popup_padding, header_height, popup_spacing, item_height),
 		placement = awful.placement.centered,
 		widget = {
 			{
@@ -124,8 +125,15 @@ local function build_popup(args)
 	})
 
 	function popup:update(update_args)
+		last_update_args = update_args
 		local items = update_args.items or {}
-		local popup_height = popup_height_for_items(#items)
+		local popup_height = popup_height_for_items(
+			#items,
+			beautiful.popup_menu_padding,
+			beautiful.popup_menu_header_height,
+			beautiful.popup_menu_spacing,
+			beautiful.popup_menu_item_height
+		)
 
 		title_widget.markup = "<b>" .. update_args.title .. "</b>"
 		items_widget:reset()
@@ -138,12 +146,29 @@ local function build_popup(args)
 		self.maximum_height = popup_height
 	end
 
+	function popup:refresh_theme()
+		self.border_width = beautiful.border_width
+		self.border_color = beautiful.popup_menu_border
+		self.bg = beautiful.popup_menu_bg
+		self.fg = beautiful.popup_menu_fg
+
+		if last_update_args then
+			self:update(last_update_args)
+		end
+	end
+
 	function popup:close()
 		self.visible = false
 		for _, backdrop in ipairs(backdrops) do
 			backdrop.visible = false
 		end
+		awesome.disconnect_signal("theme::reload", self._theme_reload_handler)
 	end
+
+	popup._theme_reload_handler = function()
+		popup:refresh_theme()
+	end
+	awesome.connect_signal("theme::reload", popup._theme_reload_handler)
 
 	return popup
 end
@@ -239,14 +264,24 @@ function M.new(args)
 		commit = args.commit,
 		rollback = args.rollback,
 		entries = args.entries or {},
+		preview_delay_ms = args.preview_delay_ms or 0,
 		popup = nil,
 		promptbox = args.promptbox or (args.screen or awful.screen.focused()).mypromptbox.widget,
 		active_entries = {},
 		transaction = nil,
 		confirmed = false,
+		preview_timer = nil,
 	}
 
+	function chooser:cancel_scheduled_preview()
+		if self.preview_timer then
+			self.preview_timer:stop()
+			self.preview_timer = nil
+		end
+	end
+
 	function chooser:close()
+		self:cancel_scheduled_preview()
 		if self.popup then
 			self.popup:close()
 			self.popup = nil
@@ -319,14 +354,28 @@ function M.new(args)
 	end
 
 	function chooser:preview_current()
-		-- Preview is optional; chooser types like layouts use it for live updates.
 		local entry = self:get_current_entry()
+		local preview = self.preview
 
-		if entry and self.preview then
-			self.preview(entry, self.transaction, self)
+		self:cancel_scheduled_preview()
+		self:update_popup()
+
+		if not entry or not preview then
+			return
 		end
 
-		self:update_popup()
+		if self.preview_delay_ms <= 0 then
+			preview(entry, self.transaction, self)
+			return
+		end
+
+		self.preview_timer = gears.timer.start_new(self.preview_delay_ms / 1000, function()
+			self.preview_timer = nil
+			if not self.confirmed and self:get_current_entry() == entry then
+				preview(entry, self.transaction, self)
+			end
+			return false
+		end)
 	end
 
 	function chooser:sync_after_query_change()

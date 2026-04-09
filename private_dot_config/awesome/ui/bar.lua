@@ -40,13 +40,13 @@ local taglist_buttons = gears.table.join(
 	end)
 )
 
-local set_wallpaper = require("ui.wallpaper")
+local wallpaper = require("ui.wallpaper")
 
 -- Re-set wallpaper when a screen's geometry changes (e.g. different resolution)
-screen.connect_signal("property::geometry", set_wallpaper)
+screen.connect_signal("property::geometry", wallpaper.apply_current)
 
 awful.screen.connect_for_each_screen(function(s)
-	set_wallpaper(s)
+	wallpaper.apply_current(s)
 
 	local tags = awful.tag({ "1", "2", "3", "4", "5", "6", "7", "8", "9" }, s, awful.layout.layouts[1])
 
