@@ -11,12 +11,19 @@ stty -ixon
 source "$HOME/.profile"
 
 # History
-HISTCONTROL=ignoredups:erasedups:ignoreboth # don't put duplicate lines or lines starting with space in the history.
+HISTCONTROL=ignoreboth:erasedups # ignore commands starting with a space and keep only the newest duplicate
+HISTIGNORE='history:history *:ls:ll:lll:la:l:lsh:pwd:clear:exit:cd:cd ..:..:...'
 shopt -s histappend # append to the history file, don't overwrite it
+shopt -s cmdhist # store multi-line commands as a single history entry
 HISTSIZE=10000
-HISTFILESIZE=20000
+HISTFILESIZE=200000
 eval "$(~/.local/bin/zoxide init bash)"
-PROMPT_COMMAND="history -a; history -c; history -r; $PROMPT_COMMAND"
+history_sync() {
+    history -a
+    history -n
+}
+
+PROMPT_COMMAND="history_sync${PROMPT_COMMAND:+; $PROMPT_COMMAND}"
 
 # Terminal
 shopt -s checkwinsize # check the window size after each command and, if necessary, update the values of LINES and COLUMNS.
