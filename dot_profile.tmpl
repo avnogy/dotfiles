@@ -39,24 +39,15 @@ check_and_execute() {
     fi
 }
 
-# Detects the kernel name, can be linux, wsl or darwin
-kernel_name () {
-    if uname -a | grep -qi "microsoft"; then
-        echo "wsl"
-    else
-        echo "$(uname -s | tr '[:upper:]' '[:lower:]')"
-    fi
-}
-
 appendpath '/usr/local/sbin'
 appendpath '/usr/local/bin'
 appendpath '/usr/bin'
 appendpath '~/.local/bin'
 appendpath '~/.scripts'
 
-
-[ "$(kernel_name)" = "wsl" ] && export WINUSERNAME=$(check_and_execute wslvar USERNAME) # Windows username
-[ "$(kernel_name)" != "darwin" ] && pidof X && xset b off && xset b 0 0 0 # Disable annoying beep in X server
+{{- if eq .chezmoi.hostname "wsl" }}
+export WINUSERNAME=$(check_and_execute wslvar USERNAME) # Windows username
+{{- end }}
+pidof X && xset b off && xset b 0 0 0 # Disable annoying beep in X server
 
 check_and_execute source ~/.cargo/env
-

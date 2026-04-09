@@ -110,7 +110,15 @@ local globalkeys = gears.table.join(
 		awful.spawn("spotify")
 	end, { description = "open spotify", group = "launcher" }),
 	awful.key({ consts.modkey }, "c", function()
-		awful.spawn({ "google-chrome-stable", "--disable-background-mode" })
+		awful.spawn({
+{{- if eq .chezmoi.hostname "eclipse" }}
+			"env",
+			"__NV_PRIME_RENDER_OFFLOAD=1",
+			"__GLX_VENDOR_LIBRARY_NAME=nvidia",
+{{- end }}
+			"google-chrome-stable",
+			"--disable-background-mode",
+		})
 	end, { description = "open chrome", group = "launcher" }),
 	awful.key({ consts.modkey }, "m", function()
 		awful.spawn(consts.terminal .. " -e pulsemixer")
