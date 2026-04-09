@@ -3,7 +3,7 @@ set -euo pipefail
 
 max_width="${MAX_WIDTH:-2560}"
 max_height="${MAX_HEIGHT:-1440}"
-jpg_quality="${JPG_QUALITY:-88}"
+jpg_quality="${JPG_QUALITY:-100}"
 wal_cache_dir="${XDG_CACHE_HOME:-$HOME/.cache}/wal"
 palette_cache_dir="${wal_cache_dir}/awesome-palettes"
 
