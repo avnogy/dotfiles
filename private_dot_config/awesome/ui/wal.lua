@@ -1,7 +1,6 @@
 local M = {}
 
 local wal_cache_dir = (os.getenv("XDG_CACHE_HOME") or (os.getenv("HOME") .. "/.cache")) .. "/wal"
-local preview_cache_dir = wal_cache_dir .. "/preview"
 local palette_cache_dir = wal_cache_dir .. "/awesome-palettes"
 local color_cache = {}
 
@@ -47,10 +46,9 @@ local function command(name)
 	return path and path ~= "" and path or nil
 end
 
-local function cache_file_path(path, preview)
+local function cache_file_path(path)
 	local name = path:match("([^/]+)$") or path
-	local prefix = preview and "preview-" or "full-"
-	return palette_cache_dir .. "/" .. prefix .. name .. ".sh"
+	return palette_cache_dir .. "/full-" .. name .. ".sh"
 end
 
 local function parse_colors(content)
@@ -71,48 +69,21 @@ local function parse_colors(content)
 	return colors
 end
 
-local function preview_wallpaper_path(wallpaper)
-	local name = wallpaper:match("([^/]+)$") or "preview.jpg"
-	local preview_path = preview_cache_dir .. "/" .. name
-	local magick = command("magick")
-
-	if file_text(preview_path) then
-		return preview_path
-	end
-
-	if not magick then
-		return wallpaper
-	end
-
-	os.execute("mkdir -p " .. shell_quote(preview_cache_dir))
-	os.execute(
-		shell_quote(magick)
-			.. " "
-			.. shell_quote(wallpaper)
-			.. " -resize 512x512\\> "
-			.. shell_quote(preview_path)
-	)
-
-	return file_text(preview_path) and preview_path or wallpaper
-end
-
-function M.apply(wallpaper, opts)
-	local source = opts and opts.preview and preview_wallpaper_path(wallpaper) or wallpaper
+function M.apply(wallpaper)
 	local wal = command("wal")
 
 	if not wal then
 		return false
 	end
 
-	local ok, _, code = os.execute(shell_quote(wal) .. " -q -n -i " .. shell_quote(source))
+	local ok, _, code = os.execute(shell_quote(wal) .. " -q -n -i " .. shell_quote(wallpaper))
 
 	return ok == true or ok == 0 or code == 0
 end
 
-function M.colors(wallpaper, opts)
-	local preview = opts and opts.preview
-	local cache_key = (preview and "preview:" or "full:") .. wallpaper
-	local palette_cache_path = cache_file_path(wallpaper, preview)
+function M.colors(wallpaper)
+	local cache_key = wallpaper
+	local palette_cache_path = cache_file_path(wallpaper)
 	local current_wallpaper = file_text(wal_cache_dir .. "/wal")
 	local colors_path = wal_cache_dir .. "/colors.sh"
 
@@ -130,9 +101,8 @@ function M.colors(wallpaper, opts)
 		current_wallpaper = current_wallpaper:gsub("^%s+", ""):gsub("%s+$", "")
 	end
 
-	local source = preview and preview_wallpaper_path(wallpaper) or wallpaper
-	if current_wallpaper ~= source or not file_text(colors_path) then
-		if not M.apply(wallpaper, opts) then
+	if current_wallpaper ~= wallpaper or not file_text(colors_path) then
+		if not M.apply(wallpaper) then
 			return {}
 		end
 	end

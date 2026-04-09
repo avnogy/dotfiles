@@ -11,6 +11,27 @@ local themes_path = gfs.get_themes_dir()
 
 local M = {}
 
+local function max_channel(first, second)
+	local result = "#"
+	local left_pairs = {}
+	local right_pairs = {}
+
+	for pair in first:gmatch("[a-fA-F0-9][a-fA-F0-9]") do
+		left_pairs[#left_pairs + 1] = pair
+	end
+
+	for pair in second:gmatch("[a-fA-F0-9][a-fA-F0-9]") do
+		right_pairs[#right_pairs + 1] = pair
+	end
+
+	for i = 1, math.min(#left_pairs, #right_pairs) do
+		local value = math.max(tonumber("0x" .. left_pairs[i]), tonumber("0x" .. right_pairs[i]))
+		result = result .. string.format("%2.2x", value)
+	end
+
+	return result
+end
+
 local function tint(color_value, amount)
 	local result = "#"
 	for pair in color_value:gmatch("[a-fA-F0-9][a-fA-F0-9]") do
@@ -61,6 +82,7 @@ function M.build(wallpaper_path, opts)
 	local accent = colors.color4 or colors.color12 or xrdb.color4 or xrdb.color12 or "#5f87ff"
 	local accent_alt = colors.color6 or colors.color14 or xrdb.color6 or xrdb.color14 or accent
 	local urgent = colors.color1 or colors.color9 or xrdb.color1 or xrdb.color9 or "#cc5555"
+	base_bg = max_channel(mix(base_bg, "#000000", 0.7), "#0a0d0b")
 	local surface = colors.color0 or xrdb.color0 or tint(base_bg, 16)
 	local surface_alt = colors.color8 or xrdb.color8 or tint(surface, 24)
 	local muted_focus_fg = mix(base_fg, accent, 0.1)
@@ -70,8 +92,8 @@ function M.build(wallpaper_path, opts)
 	theme.font = "JetBrains Mono NL 8"
 
 	theme.bg_normal = base_bg
-	theme.bg_focus = mix(surface_alt, accent, 0.15)
-	theme.bg_urgent = mix(surface, urgent, 0.2)
+	theme.bg_focus = mix(surface, accent, 0.08)
+	theme.bg_urgent = mix(surface, urgent, 0.14)
 	theme.bg_minimize = surface
 	theme.bg_systray = theme.bg_normal
 
@@ -128,7 +150,7 @@ function M.build(wallpaper_path, opts)
 	theme.popup_menu_bg = mix(base_bg, surface, 0.65)
 	theme.popup_menu_fg = base_fg
 	theme.popup_menu_border = mix(surface_alt, accent, 0.35)
-	theme.popup_menu_item_bg = mix(surface_alt, accent, 0.18)
+	theme.popup_menu_item_bg = mix(surface, accent, 0.12)
 	theme.popup_menu_item_border = mix(surface_alt, accent, 0.45)
 	theme.popup_menu_width = dpi(420)
 	theme.popup_menu_padding = dpi(20)
