@@ -56,7 +56,7 @@ if ! shopt -oq posix; then
 fi
 bind 'set completion-ignore-case on'
 
-check_and_execute source "$HOME/.fzf.bash"
+eval "$(check_and_execute fzf --bash)"
 
 {{- if eq .chezmoi.hostname "wsl" }}
 # WSL key bindings
