@@ -25,7 +25,6 @@ local clientbuttons = gears.table.join(
 		c:emit_signal("request::activate", "mouse_click", {
 			raise = true,
 		})
-		c.floating = true
 		awful.mouse.client.resize(c)
 	end)
 )
