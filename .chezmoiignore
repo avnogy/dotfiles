@@ -1,2 +1,4 @@
 README.md
 LICENSE
+.luarc.json
+private_dot_config/exact_awesome/.luarc.json
