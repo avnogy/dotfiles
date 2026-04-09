@@ -270,18 +270,21 @@ function M.new(args)
 		active_entries = {},
 		transaction = nil,
 		confirmed = false,
-		preview_timer = nil,
+		preview_generation = 0,
 	}
 
-	function chooser:cancel_scheduled_preview()
-		if self.preview_timer then
-			self.preview_timer:stop()
-			self.preview_timer = nil
+	function chooser:invalidate_preview()
+		self.preview_generation = self.preview_generation + 1
+	end
+
+	function chooser:run_preview(entry)
+		if entry and self.preview then
+			self.preview(entry, self.transaction, self)
 		end
 	end
 
 	function chooser:close()
-		self:cancel_scheduled_preview()
+		self:invalidate_preview()
 		if self.popup then
 			self.popup:close()
 			self.popup = nil
@@ -340,7 +343,7 @@ function M.new(args)
 	function chooser:rebuild()
 		-- Recalculate visible entries and clamp the current selection.
 		for _, entry in ipairs(self.entries) do
-			entry._popup_menu_text = entry._popup_menu_text or self.text(entry, self)
+			entry._popup_menu_text = entry._popup_menu_text or self.text(entry)
 		end
 
 		self.active_entries = self.recalculate(self) or {}
@@ -355,27 +358,30 @@ function M.new(args)
 
 	function chooser:preview_current()
 		local entry = self:get_current_entry()
-		local preview = self.preview
 
-		self:cancel_scheduled_preview()
+		self:invalidate_preview()
 		self:update_popup()
 
-		if not entry or not preview then
+		if not entry or not self.preview then
 			return
 		end
 
 		if self.preview_delay_ms <= 0 then
-			preview(entry, self.transaction, self)
+			self:run_preview(entry)
 			return
 		end
 
-		self.preview_timer = gears.timer.start_new(self.preview_delay_ms / 1000, function()
-			self.preview_timer = nil
-			if not self.confirmed and self:get_current_entry() == entry then
-				preview(entry, self.transaction, self)
-			end
-			return false
-		end)
+		local generation = self.preview_generation
+		gears.timer({
+			timeout = self.preview_delay_ms / 1000,
+			autostart = true,
+			single_shot = true,
+			callback = function()
+				if generation == self.preview_generation and not self.confirmed and self:get_current_entry() == entry then
+					self:run_preview(entry)
+				end
+			end,
+		})
 	end
 
 	function chooser:sync_after_query_change()

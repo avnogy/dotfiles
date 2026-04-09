@@ -136,7 +136,7 @@ function M.choose()
 			{ modifiers = { "Mod4", "Shift" }, key = "t" },
 		},
 		entries = entries,
-		preview_delay_ms = 150,
+		preview_delay_ms = 100,
 		text = function(entry)
 			return entry.name
 		end,
