@@ -41,3 +41,13 @@ glx-no-rebind-pixmap = true;
 {{- if eq .chezmoi.hostname "nomad" }}
 use-damage = true;
 {{- end }}
+
+blur:
+{
+  method = "dual_kawase";
+  strength = 1;
+};
+
+opacity-rule = [
+  "90:class_g = 'Alacritty'"
+];

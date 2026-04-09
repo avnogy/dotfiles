@@ -3,3 +3,7 @@ import = [
   "~/.cache/wal/colors-alacritty.toml",
 ]
 live_config_reload = true
+[scrolling]
+history = 100000
+[mouse]
+hide_when_typing = true
