@@ -11,7 +11,7 @@ local themes_path = gfs.get_themes_dir()
 
 local M = {}
 
-local function shift_color(color_value, amount)
+local function tint(color_value, amount)
 	local result = "#"
 	for pair in color_value:gmatch("[a-fA-F0-9][a-fA-F0-9]") do
 		local value = tonumber("0x" .. pair) + amount
@@ -26,7 +26,7 @@ local function shift_color(color_value, amount)
 	return result
 end
 
-local function blend_colors(first, second, ratio)
+local function mix(first, second, ratio)
 	local result = "#"
 	local left_pairs = {}
 	local right_pairs = {}
@@ -61,24 +61,24 @@ function M.build(wallpaper_path, opts)
 	local accent = colors.color4 or colors.color12 or xrdb.color4 or xrdb.color12 or "#5f87ff"
 	local accent_alt = colors.color6 or colors.color14 or xrdb.color6 or xrdb.color14 or accent
 	local urgent = colors.color1 or colors.color9 or xrdb.color1 or xrdb.color9 or "#cc5555"
-	local surface = colors.color0 or xrdb.color0 or shift_color(base_bg, 16)
-	local surface_alt = colors.color8 or xrdb.color8 or shift_color(surface, 24)
-	local muted_focus_fg = blend_colors(base_fg, accent, 0.1)
-	local tag_focus_fg = blend_colors(base_fg, accent, 0.22)
-	local titlebar_focus_fg = blend_colors(base_fg, accent_alt, 0.18)
+	local surface = colors.color0 or xrdb.color0 or tint(base_bg, 16)
+	local surface_alt = colors.color8 or xrdb.color8 or tint(surface, 24)
+	local muted_focus_fg = mix(base_fg, accent, 0.1)
+	local tag_focus_fg = mix(base_fg, accent, 0.22)
+	local titlebar_focus_fg = mix(base_fg, accent_alt, 0.18)
 
 	theme.font = "JetBrains Mono NL 8"
 
 	theme.bg_normal = base_bg
-	theme.bg_focus = blend_colors(surface_alt, accent, 0.15)
-	theme.bg_urgent = blend_colors(surface, urgent, 0.2)
+	theme.bg_focus = mix(surface_alt, accent, 0.15)
+	theme.bg_urgent = mix(surface, urgent, 0.2)
 	theme.bg_minimize = surface
 	theme.bg_systray = theme.bg_normal
 
 	theme.fg_normal = base_fg
 	theme.fg_focus = muted_focus_fg
 	theme.fg_urgent = base_fg
-	theme.fg_minimize = shift_color(base_fg, -24)
+	theme.fg_minimize = tint(base_fg, -24)
 
 	theme.useless_gap = dpi(4)
 	theme.border_width = dpi(1)
@@ -125,11 +125,11 @@ function M.build(wallpaper_path, opts)
 	theme.menu_height = dpi(15)
 	theme.menu_width = dpi(100)
 
-	theme.popup_menu_bg = blend_colors(base_bg, surface, 0.65)
+	theme.popup_menu_bg = mix(base_bg, surface, 0.65)
 	theme.popup_menu_fg = base_fg
-	theme.popup_menu_border = blend_colors(surface_alt, accent, 0.35)
-	theme.popup_menu_item_bg = blend_colors(surface_alt, accent, 0.18)
-	theme.popup_menu_item_border = blend_colors(surface_alt, accent, 0.45)
+	theme.popup_menu_border = mix(surface_alt, accent, 0.35)
+	theme.popup_menu_item_bg = mix(surface_alt, accent, 0.18)
+	theme.popup_menu_item_border = mix(surface_alt, accent, 0.45)
 	theme.popup_menu_width = dpi(420)
 	theme.popup_menu_padding = dpi(20)
 	theme.popup_menu_spacing = dpi(16)
@@ -142,11 +142,11 @@ function M.build(wallpaper_path, opts)
 	theme = theme_assets.recolor_layout(theme, theme.fg_normal)
 
 	theme = theme_assets.recolor_titlebar(theme, theme.fg_normal, "normal")
-	theme = theme_assets.recolor_titlebar(theme, shift_color(theme.fg_normal, 60), "normal", "hover")
+	theme = theme_assets.recolor_titlebar(theme, tint(theme.fg_normal, 60), "normal", "hover")
 	theme = theme_assets.recolor_titlebar(theme, urgent, "normal", "press")
 	theme = theme_assets.recolor_titlebar(theme, theme.fg_focus, "focus")
-	theme = theme_assets.recolor_titlebar(theme, shift_color(theme.fg_focus, 60), "focus", "hover")
-	theme = theme_assets.recolor_titlebar(theme, shift_color(accent, 24), "focus", "press")
+	theme = theme_assets.recolor_titlebar(theme, tint(theme.fg_focus, 60), "focus", "hover")
+	theme = theme_assets.recolor_titlebar(theme, tint(accent, 24), "focus", "press")
 
 	theme.wallpaper = wallpaper_path
 

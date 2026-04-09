@@ -13,7 +13,7 @@ local state_dir = (os.getenv("XDG_STATE_HOME") or (os.getenv("HOME") .. "/.local
 local state_path = state_dir .. "/wallpaper"
 local default_name = "wallhaven-eyz668_2560x1440.jpg"
 
-local function read_file(path)
+local function file_text(path)
 	local file = io.open(path, "r")
 	if not file then
 		return nil
@@ -22,25 +22,6 @@ local function read_file(path)
 	local content = file:read("*a")
 	file:close()
 	return content
-end
-
-local function write_file(path, content)
-	local file = io.open(path, "w")
-	if not file then
-		return false
-	end
-
-	file:write(content)
-	file:close()
-	return true
-end
-
-local function trim(value)
-	if not value then
-		return nil
-	end
-
-	return value:gsub("^%s+", ""):gsub("%s+$", "")
 end
 
 local function list_paths()
@@ -58,13 +39,10 @@ local function list_paths()
 	return paths
 end
 
-local function resolve_path(value)
-	if value and gfs.file_readable(value) then
-		return value
-	end
+local function wallpaper_path(name)
+	local filename = name and name:match("([^/]+)$") or default_name
+	local path = optimized_dir .. "/" .. filename
 
-	local name = value and value:match("([^/]+)$") or default_name
-	local path = optimized_dir .. "/" .. name
 	if gfs.file_readable(path) then
 		return path
 	end
@@ -78,12 +56,18 @@ local function resolve_path(value)
 end
 
 function M.current()
-	return resolve_path(trim(read_file(state_path)))
+	local current = file_text(state_path)
+
+	if current then
+		current = current:match("^%s*(.-)%s*$")
+	end
+
+	return wallpaper_path(current)
 end
 
 function M.apply(path, screen_obj)
 	local beautiful = require("beautiful")
-	local wallpaper = resolve_path(path or M.current())
+	local wallpaper = path and wallpaper_path(path) or M.current()
 
 	beautiful.wallpaper = wallpaper
 
@@ -102,19 +86,28 @@ function M.apply_current(screen_obj)
 end
 
 function M.persist(path)
+	local file = io.open(state_path, "w")
+
 	os.execute("mkdir -p " .. "'" .. state_dir:gsub("'", [['"'"']]) .. "'")
-	return write_file(state_path, (path:match("([^/]+)$") or path) .. "\n")
+	if not file then
+		return false
+	end
+
+	file:write((path:match("([^/]+)$") or path) .. "\n")
+	file:close()
+	return true
 end
 
 function M.list()
 	local entries = {}
+
 	for _, path in ipairs(list_paths()) do
-		local name = path:match("([^/]+)$") or path
 		entries[#entries + 1] = {
-			name = name,
+			name = path:match("([^/]+)$") or path,
 			path = path,
 		}
 	end
+
 	return entries
 end
 

@@ -5,7 +5,7 @@ local preview_cache_dir = wal_cache_dir .. "/preview"
 local palette_cache_dir = wal_cache_dir .. "/awesome-palettes"
 local color_cache = {}
 
-local function read_file(path)
+local function file_text(path)
 	local file = io.open(path, "r")
 	if not file then
 		return nil
@@ -16,22 +16,11 @@ local function read_file(path)
 	return content
 end
 
-local function write_file(path, content)
-	local file = io.open(path, "w")
-	if not file then
-		return false
-	end
-
-	file:write(content)
-	file:close()
-	return true
-end
-
 local function shell_quote(value)
 	return "'" .. value:gsub("'", [['"'"']]) .. "'"
 end
 
-local function command_path(name)
+local function command(name)
 	local home = os.getenv("HOME")
 	local candidates = {
 		home and (home .. "/.local/bin/" .. name) or nil,
@@ -58,8 +47,8 @@ local function command_path(name)
 	return path and path ~= "" and path or nil
 end
 
-local function cache_file_path(wallpaper, preview)
-	local name = wallpaper:match("([^/]+)$") or wallpaper
+local function cache_file_path(path, preview)
+	local name = path:match("([^/]+)$") or path
 	local prefix = preview and "preview-" or "full-"
 	return palette_cache_dir .. "/" .. prefix .. name .. ".sh"
 end
@@ -83,11 +72,11 @@ local function parse_colors(content)
 end
 
 local function preview_wallpaper_path(wallpaper)
-	local name = wallpaper:match("([^/]+)$") or "preview.png"
+	local name = wallpaper:match("([^/]+)$") or "preview.jpg"
 	local preview_path = preview_cache_dir .. "/" .. name
-	local magick = command_path("magick")
+	local magick = command("magick")
 
-	if read_file(preview_path) then
+	if file_text(preview_path) then
 		return preview_path
 	end
 
@@ -104,65 +93,61 @@ local function preview_wallpaper_path(wallpaper)
 			.. shell_quote(preview_path)
 	)
 
-	return read_file(preview_path) and preview_path or wallpaper
+	return file_text(preview_path) and preview_path or wallpaper
 end
 
 function M.apply(wallpaper, opts)
-	local preview = opts and opts.preview
-	local source_wallpaper = preview and preview_wallpaper_path(wallpaper) or wallpaper
-	local wal = command_path("wal")
+	local source = opts and opts.preview and preview_wallpaper_path(wallpaper) or wallpaper
+	local wal = command("wal")
 
 	if not wal then
 		return false
 	end
 
-	local ok, _, code = os.execute(
-		shell_quote(wal) .. " -q -n -i " .. shell_quote(source_wallpaper)
-	)
+	local ok, _, code = os.execute(shell_quote(wal) .. " -q -n -i " .. shell_quote(source))
 
 	return ok == true or ok == 0 or code == 0
 end
 
 function M.colors(wallpaper, opts)
 	local preview = opts and opts.preview
-	local source_wallpaper = preview and preview_wallpaper_path(wallpaper) or wallpaper
 	local cache_key = (preview and "preview:" or "full:") .. wallpaper
 	local palette_cache_path = cache_file_path(wallpaper, preview)
-	local current_wallpaper = read_file(wal_cache_dir .. "/wal")
+	local current_wallpaper = file_text(wal_cache_dir .. "/wal")
 	local colors_path = wal_cache_dir .. "/colors.sh"
-	local wal = command_path("wal")
 
 	if color_cache[cache_key] then
 		return color_cache[cache_key]
 	end
 
-	local cached_content = read_file(palette_cache_path)
+	local cached_content = file_text(palette_cache_path)
 	if cached_content then
 		color_cache[cache_key] = parse_colors(cached_content)
 		return color_cache[cache_key]
-	end
-
-	if not wal then
-		return {}
 	end
 
 	if current_wallpaper then
 		current_wallpaper = current_wallpaper:gsub("^%s+", ""):gsub("%s+$", "")
 	end
 
-	if current_wallpaper ~= source_wallpaper or not read_file(colors_path) then
+	local source = preview and preview_wallpaper_path(wallpaper) or wallpaper
+	if current_wallpaper ~= source or not file_text(colors_path) then
 		if not M.apply(wallpaper, opts) then
 			return {}
 		end
 	end
 
-	local content = read_file(colors_path)
+	local content = file_text(colors_path)
 	if not content then
 		return {}
 	end
 
 	os.execute("mkdir -p " .. shell_quote(palette_cache_dir))
-	write_file(palette_cache_path, content)
+	local file = io.open(palette_cache_path, "w")
+	if file then
+		file:write(content)
+		file:close()
+	end
 
 	local colors = parse_colors(content)
 	color_cache[cache_key] = colors

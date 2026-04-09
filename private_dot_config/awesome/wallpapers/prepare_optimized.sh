@@ -18,7 +18,7 @@ mkdir -p "${output_dir}"
 mkdir -p "${preview_cache_dir}"
 mkdir -p "${palette_cache_dir}"
 
-rm -f "${output_dir}"/*.jpg
+rm -f "${output_dir}"/*.jpg "${output_dir}"/*.jpeg "${output_dir}"/*.png "${output_dir}"/*.webp
 rm -f "${preview_cache_dir}"/*.jpg
 rm -f "${palette_cache_dir}"/full-*.sh "${palette_cache_dir}"/preview-*.sh
 
@@ -38,11 +38,9 @@ optimized_name() {
 	local source="$1"
 	local base="$2"
 	local size
-	local stem
 
 	size="$(magick "${source}" -resize "${max_width}x${max_height}>" -format '%wx%h' info:)"
-	stem="$(printf '%s\n' "${base}" | sed -E 's/_[0-9]+x[0-9]+$//')"
-	printf '%s_%s.jpg\n' "${stem}" "${size}"
+	printf '%s_%s.jpg\n' "$(printf '%s\n' "${base}" | sed -E 's/_[0-9]+x[0-9]+$//')" "${size}"
 }
 
 for source in "${script_dir}"/*; do
