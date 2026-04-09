@@ -3,7 +3,7 @@ if [ $(hostname) = "eclipse" ]; then
     xrandr --output HDMI-0 --pos 0x0 --rotate left --output DP-0   --pos 1080x0 --rotate normal --primary
 fi
 
-picom --backend glx &
+picom --config ~/.config/picom.conf &
 dunst &
 clipmenud &
 lxpolkit &
