@@ -48,6 +48,28 @@ blur:
   strength = 1;
 };
 
-opacity-rule = [
-  "90:class_g = 'Alacritty'"
-];
+rules: ({
+  match = "class_g = 'Alacritty'";
+  opacity = 0.90;
+},{
+  match = "name = 'Picture in picture'";
+  blur = false;
+  blur-background = false;
+  opacity = 0.70;
+}, {
+  match = "window_type = 'tooltip'";
+  fade = false;
+  shadow = false;
+  blur = false
+  opacity = 0.75;
+},{
+    match = "window_type = 'popup_menu'";
+    blur-background = false;
+},{
+    match = "window_type = 'dropdown_menu'";
+    blur-background = false;
+},{
+    match = "window_type = 'menu'";
+    blur-background = false;
+  }
+)
