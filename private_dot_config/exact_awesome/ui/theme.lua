@@ -26,7 +26,7 @@ function M.build(wallpaper_path)
 	local surface = colors.color0 or xrdb.color0 or "#111111"
 	local surface_alt = colors.color8 or xrdb.color8 or "#222222"
 
-	theme.font = "JetBrains Mono NL 8"
+	theme.font = "monospace 9"
 
 	theme.bg_normal = base_bg
 	theme.bg_focus = surface
