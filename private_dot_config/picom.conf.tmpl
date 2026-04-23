@@ -19,8 +19,7 @@ unredir-if-possible = true;
 
 blur-method = "none";
 
-corner-radius = 10;
-detect-rounded-corners = true;
+corner-radius = 0;
 
 detect-rounded-corners = false;
 detect-client-opacity = true;
@@ -49,8 +48,6 @@ blur:
   strength = 1;
 };
 
-
-
 rules: ({
   match = "class_g = 'Alacritty'";
   opacity = 0.90;
@@ -74,8 +71,5 @@ rules: ({
 },{
     match = "window_type = 'menu'";
     blur-background = false;
-},{
-  match = "window_type = 'dock'";
-  corner-radius = 0;
-})
-
+  }
+)
