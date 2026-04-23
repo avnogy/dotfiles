@@ -8,4 +8,6 @@ history = 100000
 [mouse]
 hide_when_typing = true
 [window]
-padding = { x = 4, y = 4 }
+padding = { x = 6, y = 3 }
+[font]
+size = 10.25
