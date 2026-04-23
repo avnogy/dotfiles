@@ -4,9 +4,9 @@ local popup_menu = require("ui.popup_menu")
 local M = {}
 
 M.available = {
-	awful.layout.suit.tile,
 	awful.layout.suit.max,
 	awful.layout.suit.magnifier,
+	awful.layout.suit.tile,
 	awful.layout.suit.floating,
 	awful.layout.suit.tile.left,
 	awful.layout.suit.tile.bottom,
