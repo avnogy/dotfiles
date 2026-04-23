@@ -2,19 +2,12 @@ backend = "glx";
 
 shadow = false;
 
-fading = true;
-fade-in-step = 0.12;
-fade-out-step = 0.12;
-fade-delta = 5;
-
-
+fading = false;
 vsync = true;
 
 use-damage = false;
 
 unredir-if-possible = true;
-
-blur-method = "none";
 
 corner-radius = 0;
 
@@ -93,5 +86,13 @@ rules: (
     corner-radius = 0;
     opacity = 1.0; 
 }
+)
+
+animations = (
+    {
+        triggers = ["geometry"];
+        preset = "geometry-change";
+        duration = 0.1;
+    }
 )
 
