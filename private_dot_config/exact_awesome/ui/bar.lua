@@ -1,11 +1,12 @@
 local gears = require("gears")
 local awful = require("awful")
-local beautiful = require("beautiful")
 local wibox = require("wibox")
+local beautiful = require("beautiful")
 
 local consts = require("consts")
+local helpers = require("widgets.helpers")
 
-local mykeyboardlayout = awful.widget.keyboardlayout()
+local mykeyboardlayout = helpers.new_text_widget(awful.widget.keyboardlayout())
 local battery_widget = require("widgets.battery")
 local network_widget = require("widgets.network")
 local volume = require("widgets.volume")
@@ -14,7 +15,9 @@ local home_widget = require("widgets.home")
 local ram_widget = require("widgets.ram")
 local gpu_widget = require("widgets.gpu")
 local cpu_widget = require("widgets.cpu")
-local mytextclock = wibox.widget.textclock("%F %T ", 1)
+local battery_widget = require("widgets.battery")
+
+local mytextclock = helpers.new_text_widget(wibox.widget.textclock("%F %T ", 1))
 
 -- Create a wibox for each screen and add it
 local taglist_buttons = gears.table.join(
@@ -100,14 +103,16 @@ awful.screen.connect_for_each_screen(function(s)
 			s.mytaglist,
 			s.mypromptbox,
 		},
-		s.mytasklist, -- Middle widget
+		{ -- Middle widget
+		s.mytasklist,
+		bg = beautiful.bg_normal,
+		widget = wibox.container.background,
+	},
 		{ -- Right widgets
 			layout = wibox.layout.fixed.horizontal,
 			wibox.widget.systray(),
 			mykeyboardlayout,
-			network_widget,
 			volume_widget,
-			home_widget,
 			ram_widget,
 			gpu_widget,
 			cpu_widget,

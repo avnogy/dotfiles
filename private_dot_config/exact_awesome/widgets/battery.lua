@@ -1,5 +1,6 @@
 local gears = require("gears")
 local naughty = require("naughty")
+local beautiful = require("beautiful")
 
 local CRITICAL_BATTERY_LEVEL = 15
 local WARNING_THRESHOLD_SECONDS = 300
@@ -48,12 +49,13 @@ local function maybe_warn_battery_low(charge, status)
 	end
 
 	global_last_warning = os.time()
+	local theme = beautiful.get()
 	naughty.notify({
 		title = "Battery low",
 		text = "Battery is dying (" .. charge .. "%)",
 		timeout = NOTIFICATION_TIMEOUT,
-		bg = "#F06060",
-		fg = "#EEE9EF",
+		bg = theme and theme.bg_urgent or "#F06060",
+		fg = theme and theme.fg_urgent or "#EEE9EF",
 	})
 end
 

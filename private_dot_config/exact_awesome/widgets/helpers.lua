@@ -1,9 +1,27 @@
 local wibox = require("wibox")
+local beautiful = require("beautiful")
 
 local M = {}
 
-function M.new_text_widget()
-	return wibox.widget.textbox()
+function M.new_text_widget(widget)
+	widget = widget or wibox.widget.textbox()
+	local bg = wibox.widget.background()
+	bg:set_widget(widget)
+	local function apply_theme()
+		local theme = beautiful.get()
+		if theme then
+			bg.bg = theme.bg_normal
+			bg.fg = theme.fg_normal
+		end
+	end
+	awesome.connect_signal("theme::reload", apply_theme)
+	apply_theme()
+	if widget.set_text then
+		function bg:set_text(text)
+			widget:set_text(text)
+		end
+	end
+	return bg
 end
 
 function M.fmt_human(num, base)
