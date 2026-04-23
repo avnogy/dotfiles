@@ -17,7 +17,7 @@ function M.build(wallpaper_path)
 	end
 	
 	local theme = dofile(themes_path .. "default/theme.lua")
-	theme.font = "monospace 10"
+	theme.font = "monospace 9"
 
 	local colors = wal.colors(wallpaper_path)
 	local base_bg = colors.background or xrdb.background or "#1a1a1a"
