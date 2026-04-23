@@ -1,7 +1,7 @@
 local gears = require("gears")
 local awful = require("awful")
-
 local helpers = require("widgets.helpers")
+local consts = require("consts")
 
 local widget = helpers.new_text_widget()
 local prev_rx, prev_tx
@@ -65,7 +65,7 @@ local function update()
 end
 
 widget:buttons(gears.table.join(awful.button({}, 1, function()
-	awful.spawn({ "nm-connection-editor" })
+	awful.spawn(consts.terminal .. " -e impala")
 end)))
 
 gears.timer({ timeout = 1, autostart = true, callback = update })
