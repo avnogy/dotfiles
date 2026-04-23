@@ -45,6 +45,7 @@ appendpath '/usr/bin'
 appendpath '~/.local/bin'
 appendpath '~/.scripts'
 appendpath '~/.opencode/bin'
+appendpath '~/.cargo/bin'
 
 {{- if eq .chezmoi.hostname "wsl" }}
 export WINUSERNAME=$(check_and_execute wslvar USERNAME) # Windows username
