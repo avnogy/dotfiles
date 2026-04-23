@@ -25,7 +25,7 @@ cache_wal_palette() {
 	local name
 	name="$(basename -- "${source}")"
 
-	wal -q -n -i "${source}" --saturate 0.3 --backend colorthief
+	wal -q -n -i "${source}" --saturate 0.1 --backend colorthief
 	cp "${wal_cache_dir}/colors.sh" "${palette_cache_dir}/full-${name}.sh"
 }
 

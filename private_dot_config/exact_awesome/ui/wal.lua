@@ -76,7 +76,7 @@ function M.apply(wallpaper)
 		return false
 	end
 
-	local ok, _, code = os.execute(shell_quote(wal) .. " -q -n -i " .. shell_quote(wallpaper) .. " --saturate 0.3 --backend colorthief")
+	local ok, _, code = os.execute(shell_quote(wal) .. " -q -n -i " .. shell_quote(wallpaper) .. " --saturate 0.1 --backend colorthief")
 
 	return ok == true or ok == 0 or code == 0
 end
