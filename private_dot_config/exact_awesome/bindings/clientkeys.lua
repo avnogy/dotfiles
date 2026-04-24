@@ -58,7 +58,13 @@ local clientkeys = gears.table.join(
 	end, {
 		description = "force tiled",
 		group = "client",
-	})
+	}),
+	awful.key({ consts.modkey }, "Home", function(c)
+		c.opacity = c.opacity - 0.01
+	end),
+	awful.key({ consts.modkey }, "End", function(c)
+		c.opacity = c.opacity + 0.01
+	end)
 )
 
 return clientkeys
