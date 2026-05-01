@@ -1,8 +1,0 @@
-local awful = require("awful")
-{{- if eq .chezmoi.hostname "eclipse" }}
-awful.spawn.with_shell("xrandr --output HDMI-0 --pos 0x0 --rotate left --output DP-0   --pos 1080x0 --rotate normal --primary")
-{{- end }}
-awful.spawn.with_shell("picom --config ~/.config/picom.conf")
-awful.spawn.with_shell("dunst")
-awful.spawn.with_shell("clipmenud")
-awful.spawn.with_shell("lxpolkit")
