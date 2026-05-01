@@ -1,7 +1,7 @@
 #!/bin/bash
-if [ $(hostname) = "eclipse" ]; then
+{{- if eq .chezmoi.hostname "eclipse" }}
     xrandr --output HDMI-0 --pos 0x0 --rotate left --output DP-0   --pos 1080x0 --rotate normal --primary
-fi
+{{- end }}
 
 picom --config ~/.config/picom.conf &
 dunst &
@@ -11,6 +11,4 @@ lxpolkit &
 systemctl --user import-environment DISPLAY XAUTHORITY DBUS_SESSION_BUS_ADDRESS
 dbus-update-activation-environment --systemd DISPLAY XAUTHORITY DBUS_SESSION_BUS_ADDRESS
 
-#slstatus &
-#exec dwm
 exec awesome
