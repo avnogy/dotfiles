@@ -1,22 +1,16 @@
 local awful = require("awful")
+local naughty = require("naughty")
 
-local STACK_TAG = "mybrightnesstag"
+local current_notification
 
 local function notify(brightness)
-	awful.spawn({
-		"dunstify",
-		"-t",
-		"1000",
-		"-a",
-		"changebrightness",
-		"-u",
-		"low",
-		"-h",
-		"string:x-dunst-stack-tag:" .. STACK_TAG,
-		"-h",
-		"int:value:" .. brightness,
-		"Brightness: " .. brightness .. "%",
-	}, false)
+	current_notification = naughty.notify({
+		title = "Brightness",
+		text = brightness .. "%",
+		urgency = "low",
+		timeout = 1,
+		replaces_id = current_notification and current_notification.id or nil,
+	})
 end
 
 local function change(step)

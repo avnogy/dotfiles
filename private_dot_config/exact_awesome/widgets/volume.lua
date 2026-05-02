@@ -1,24 +1,22 @@
 local gears = require("gears")
 local awful = require("awful")
+local naughty = require("naughty")
 
 local consts = require("consts")
 local helpers = require("widgets.helpers")
 
-local STACK_TAG = "myvolumetag"
-
 local widget = helpers.new_text_widget()
+local current_notification
 
 local function notify(volume, muted)
-	local msg = muted and "Muted" or "Volume: " .. volume .. "%"
-	awful.spawn({
-		"dunstify",
-		"-t 1000",
-		"-a changevolume",
-		"-u low",
-		"-h string:x-dunst-stack-tag:" .. STACK_TAG,
-		"-h int:value:" .. volume,
-		msg,
-	}, false)
+	local msg = muted and "Muted" or volume .. "%"
+	current_notification = naughty.notify({
+		title = "Volume",
+		text = msg,
+		urgency = "low",
+		timeout = 1,
+		replaces_id = current_notification and current_notification.id or nil,
+	})
 end
 
 local function change(step)

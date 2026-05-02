@@ -4,8 +4,9 @@ local naughty = require("naughty")
 -- another config (This code will only ever execute for the fallback config)
 if awesome.startup_errors then
 	naughty.notify({
-		preset = naughty.config.presets.critical,
 		title = "Oops, there were errors during startup!",
 		text = awesome.startup_errors,
+		urgency = "critical",
+		timeout = 0,
 	})
 end

@@ -10,9 +10,10 @@ do
 		in_error = true
 
 		naughty.notify({
-			preset = naughty.config.presets.critical,
 			title = "Oops, an error happened!",
 			text = tostring(err),
+			urgency = "critical",
+			timeout = 0,
 		})
 		in_error = false
 	end)
