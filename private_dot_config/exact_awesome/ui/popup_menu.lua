@@ -228,7 +228,13 @@ local function ensure_normalized_entry(entry, ctx)
 	return ctx.normalized_entry_map[entry] or normalize_entry(entry, ctx)
 end
 
-local function entry_match_text(entry)
+local function entry_match_text(entry, ctx)
+	local normalized_entry = ctx and ctx.normalized_entry_map and ctx.normalized_entry_map[entry]
+
+	if normalized_entry then
+		return normalized_entry.match_text
+	end
+
 	if entry.match_text ~= nil then
 		return tostring(entry.match_text):lower()
 	end
@@ -240,9 +246,9 @@ local function entry_match_text(entry)
 	return ""
 end
 
-local function default_match(entry, query)
+local function default_match(entry, query, ctx)
 	local lowered = query:lower()
-	local text = entry_match_text(entry)
+	local text = entry_match_text(entry, ctx)
 
 	return lowered == "" or text:sub(1, #lowered) == lowered or text:find(lowered, 1, true) ~= nil
 end
