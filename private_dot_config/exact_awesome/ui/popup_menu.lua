@@ -172,11 +172,7 @@ local function build_popup(args)
 end
 
 local function normalize_key(key)
-	if key == " " then
-		return "space"
-	end
-
-	return key
+	return key == " " and "space" or key
 end
 
 local function binding_matches(mod, key, binding)
@@ -193,405 +189,254 @@ local function binding_matches(mod, key, binding)
 	return true
 end
 
-local function normalize_rendered_item(rendered)
-	if type(rendered) == "string" then
-		return { text = rendered }
-	end
-
-	return rendered or {}
+local function entry_text(entry, args)
+	return (args.text and args.text(entry, args)) or entry.text or ""
 end
 
-local function normalize_entry(raw_entry, ctx)
-	local display_text = ctx.text(raw_entry, ctx) or raw_entry.text or ""
-	local match_text = raw_entry.match_text
-
-	if match_text == nil then
-		match_text = display_text
+local function entry_match_text(entry, args)
+	local text = entry.match_text
+	if text == nil then
+		text = entry_text(entry, args)
 	end
 
-	return {
-		raw = raw_entry,
-		text = display_text,
-		match_text = tostring(match_text):lower(),
-	}
+	return tostring(text):lower()
 end
 
-local function ensure_normalized_entry(entry, ctx)
-	if entry == nil then
-		return nil
-	end
-
-	if entry.raw ~= nil and entry.text ~= nil and entry.match_text ~= nil then
-		return entry
-	end
-
-	return ctx.normalized_entry_map[entry] or normalize_entry(entry, ctx)
-end
-
-local function entry_match_text(entry, ctx)
-	local normalized_entry = ctx and ctx.normalized_entry_map and ctx.normalized_entry_map[entry]
-
-	if normalized_entry then
-		return normalized_entry.match_text
-	end
-
-	if entry.match_text ~= nil then
-		return tostring(entry.match_text):lower()
-	end
-
-	if entry.text ~= nil then
-		return tostring(entry.text):lower()
-	end
-
-	return ""
-end
-
-local function default_match(entry, query, ctx)
-	local lowered = query:lower()
-	local text = entry_match_text(entry, ctx)
-
-	return lowered == "" or text:sub(1, #lowered) == lowered or text:find(lowered, 1, true) ~= nil
-end
-
-local function default_filter(ctx)
+local function rebuild_active_entries(state)
+	local lowered_query = state.query:lower()
 	local active_entries = {}
 
-	for _, entry in ipairs(ctx.entries) do
-		if ctx.matcher(entry, ctx.query, ctx) then
-			active_entries[#active_entries + 1] = ctx.normalized_entry_map[entry] or normalize_entry(entry, ctx)
+	for _, entry in ipairs(state.args.entries) do
+		local text = entry_match_text(entry, state.args)
+		if lowered_query == "" or text:sub(1, #lowered_query) == lowered_query or text:find(lowered_query, 1, true) then
+			active_entries[#active_entries + 1] = entry
 		end
 	end
 
-	return active_entries
+	state.active_entries = active_entries
 end
 
-local function build_prompt_hooks()
-	return {
-		{
-			{},
-			"space",
-			function(command)
-				return command
-			end,
-		},
-		{
-			{},
-			" ",
-			function(command)
-				return command
-			end,
-		},
-	}
+local function update_popup(state)
+	local items = {}
+
+	for index, entry in ipairs(state.active_entries) do
+		items[#items + 1] = {
+			text = entry_text(entry, state.args),
+			selected = index == state.current_index,
+		}
+	end
+
+	state.popup:update({
+		title = state.args.title,
+		items = items,
+	})
 end
 
-function M.new(args)
-	local chooser = {
-		screen = args.screen or awful.screen.focused(),
-		title = args.title,
-		prompt = (args.prompt_title or args.title) .. ": ",
-		advance_keys = args.advance_keys or {},
-		query = args.query or "",
-		current_index = args.current_index or 1,
-		text = args.text or function(entry)
-			return entry.text or ""
+local function preview_current(state)
+	local entry = state.active_entries[state.current_index]
+
+	state.preview_generation = state.preview_generation + 1
+	update_popup(state)
+
+	if not (entry and state.args.preview) then
+		return
+	end
+
+	if state.args.preview_delay_ms <= 0 then
+		state.args.preview(entry, state.transaction, state.args)
+		return
+	end
+
+	local generation = state.preview_generation
+	gears.timer({
+		timeout = state.args.preview_delay_ms / 1000,
+		autostart = true,
+		single_shot = true,
+		callback = function()
+			if state.finished or state.closed then
+				return
+			end
+
+			if generation == state.preview_generation and state.active_entries[state.current_index] == entry then
+				state.args.preview(entry, state.transaction, state.args)
+			end
 		end,
-		render = args.render,
-		matcher = args.matcher or default_match,
-		filter = args.filter or args.recalculate or default_filter,
-		preview = args.preview,
-		snapshot = args.snapshot,
-		commit = args.commit,
-		rollback = args.rollback,
-		entries = args.entries or {},
-		normalized_entries = {},
-		normalized_entry_map = {},
-		preview_delay_ms = args.preview_delay_ms or 0,
-		popup = nil,
-		promptbox = args.promptbox or wibox.widget.textbox(),
-		active_entries = {},
-		transaction = nil,
-		closed = false,
-		finished = false,
-		preview_generation = 0,
-	}
+	})
+end
 
-	if not args.promptbox then
-		local prompt_screen = chooser.screen
-		if prompt_screen and prompt_screen.mypromptbox and prompt_screen.mypromptbox.widget then
-			chooser.promptbox = prompt_screen.mypromptbox.widget
-		end
-	end
+local function apply_query(state, query)
+	local previous_entry = state.active_entries[state.current_index]
 
-	function chooser:invalidate_preview()
-		self.preview_generation = self.preview_generation + 1
-	end
+	state.query = query or ""
+	rebuild_active_entries(state)
 
-	function chooser:get_current_entry()
-		return self.active_entries[self.current_index]
-	end
-
-	function chooser:normalize_entries()
-		local normalized = {}
-		local normalized_entry_map = {}
-
-		for _, entry in ipairs(self.entries) do
-			local normalized_entry = normalize_entry(entry, self)
-			normalized[#normalized + 1] = normalized_entry
-			normalized_entry_map[entry] = normalized_entry
-		end
-
-		self.normalized_entries = normalized
-		self.normalized_entry_map = normalized_entry_map
-	end
-
-	function chooser:ensure_popup()
-		if self.popup then
-			return self.popup
-		end
-
-		self.popup = build_popup({
-			title = self.title,
-			screen = self.screen,
-			on_cancel = function()
-				self:cancel()
-			end,
-		})
-
-		return self.popup
-	end
-
-	function chooser:close_popup()
-		self:invalidate_preview()
-
-		if self.popup then
-			self.popup:close()
-			self.popup = nil
-		end
-	end
-
-	function chooser:stop_prompt()
-		if self.closed then
-			return
-		end
-
-		self.closed = true
-		awful.keygrabber.stop()
-		self.promptbox:set_markup("")
-	end
-
-	function chooser:cleanup()
-		self:stop_prompt()
-		self:close_popup()
-	end
-
-	function chooser:rollback_transaction()
-		if self.rollback then
-			self.rollback(self.transaction, self)
-		end
-	end
-
-	function chooser:snapshot_state()
-		self.transaction = self.snapshot and self.snapshot(self) or nil
-	end
-
-	function chooser:rebuild(previous_entry)
-		local filtered_entries = self.filter(self) or {}
-
-		if filtered_entries == self.entries then
-			self.active_entries = self.normalized_entries
-		else
-			local active_entries = {}
-
-			for _, entry in ipairs(filtered_entries) do
-				local normalized_entry = ensure_normalized_entry(entry, self)
-				if normalized_entry then
-					active_entries[#active_entries + 1] = normalized_entry
-				end
-			end
-
-			self.active_entries = active_entries
-		end
-
-		if #self.active_entries == 0 then
-			self.current_index = 1
-			return
-		end
-
-		if previous_entry then
-			for index, entry in ipairs(self.active_entries) do
-				if entry == previous_entry then
-					self.current_index = index
-					return
-				end
+	if #state.active_entries == 0 then
+		state.current_index = 1
+	elseif previous_entry then
+		for index, entry in ipairs(state.active_entries) do
+			if entry == previous_entry then
+				state.current_index = index
+				break
 			end
 		end
 
-		if self.current_index < 1 or self.current_index > #self.active_entries then
-			self.current_index = 1
+		if state.current_index < 1 or state.current_index > #state.active_entries then
+			state.current_index = 1
 		end
+	else
+		state.current_index = math.max(1, math.min(state.current_index, #state.active_entries))
 	end
 
-	function chooser:update_popup()
-		local items = {}
+	preview_current(state)
+end
 
-		for index, entry in ipairs(self.active_entries) do
-			local item = normalize_rendered_item(
-				(self.render and self.render(entry.raw, index == self.current_index, self))
-					or { text = entry.text }
-			)
-			item.selected = index == self.current_index
-			items[#items + 1] = item
-		end
-
-		self:ensure_popup():update({
-			title = self.title,
-			items = items,
-		})
+local function step(state, direction)
+	if #state.active_entries == 0 then
+		return
 	end
 
-	function chooser:run_preview(entry)
-		if entry and self.preview then
-			self.preview(entry.raw, self.transaction, self)
-		end
+	local count = #state.active_entries
+	state.current_index = ((state.current_index - 1 + direction) % count) + 1
+	preview_current(state)
+end
+
+local function finish(state, action)
+	if state.finished then
+		return
 	end
 
-	function chooser:preview_current()
-		local entry = self:get_current_entry()
+	state.finished = true
+	state.closed = true
+	awful.keygrabber.stop()
+	state.promptbox:set_markup("")
+	state.popup:close()
 
-		self:invalidate_preview()
-		self:update_popup()
+	local entry = state.active_entries[state.current_index]
 
-		if not entry or not self.preview then
-			return
+	if action == "commit" then
+		if entry and state.args.commit then
+			state.args.commit(entry, state.transaction, state.args)
 		end
-
-		if self.preview_delay_ms <= 0 then
-			self:run_preview(entry)
-			return
-		end
-
-		local generation = self.preview_generation
-		gears.timer({
-			timeout = self.preview_delay_ms / 1000,
-			autostart = true,
-			single_shot = true,
-			callback = function()
-				if self.finished or self.closed then
-					return
-				end
-
-				if generation == self.preview_generation and self:get_current_entry() == entry then
-					self:run_preview(entry)
-				end
-			end,
-		})
+		return
 	end
 
-	function chooser:apply_query(input)
-		local previous_entry = self:get_current_entry()
-
-		self.query = input or ""
-		self:rebuild(previous_entry)
-		self:preview_current()
+	if state.args.rollback then
+		state.args.rollback(state.transaction, state.args)
 	end
-
-	function chooser:step(direction)
-		if #self.active_entries == 0 then
-			return
-		end
-
-		local count = #self.active_entries
-		self.current_index = ((self.current_index - 1 + direction) % count) + 1
-		self:preview_current()
-	end
-
-	function chooser:finish(action)
-		if self.finished then
-			return
-		end
-
-		self.finished = true
-		local entry = self:get_current_entry()
-		self:cleanup()
-
-		if action == "commit" then
-			if entry and self.commit then
-				self.commit(entry.raw, self.transaction, self)
-			end
-			return
-		end
-
-		self:rollback_transaction()
-	end
-
-	function chooser:cancel()
-		self:finish("cancel")
-	end
-
-	function chooser:confirm()
-		self:finish("commit")
-	end
-
-	function chooser:handle_key(mod, key)
-		for _, binding in ipairs(self.advance_keys) do
-			if binding_matches(mod, key, binding) then
-				self:step(binding.direction or 1)
-				return true
-			end
-		end
-
-		if key == "Up" or key == "Left" then
-			self:step(-1)
-			return true
-		end
-
-		if key == "Down" or key == "Right" then
-			self:step(1)
-			return true
-		end
-
-		if key == "Escape" then
-			self:cancel()
-			return false
-		end
-
-		return false
-	end
-
-	function chooser:start()
-		self:normalize_entries()
-		self:snapshot_state()
-		self:rebuild()
-		self:preview_current()
-
-		awful.prompt.run({
-			prompt = self.prompt,
-			textbox = self.promptbox,
-			hooks = build_prompt_hooks(),
-			changed_callback = function(input)
-				self:apply_query(input)
-			end,
-			keypressed_callback = function(mod, key)
-				return self:handle_key(mod, key)
-			end,
-			exe_callback = function()
-				self:confirm()
-			end,
-			done_callback = function()
-				if not self.finished then
-					self:cancel()
-				end
-			end,
-		})
-	end
-
-	return chooser
 end
 
 function M.run(args)
-	local chooser = M.new(args)
-	chooser:start()
-	return chooser
+	local state = {
+		args = {
+			title = args.title,
+			screen = args.screen or awful.screen.focused(),
+			promptbox = args.promptbox,
+			advance_keys = args.advance_keys or {},
+			entries = args.entries or {},
+			text = args.text,
+			current_index = args.current_index or 1,
+			query = args.query or "",
+			preview_delay_ms = args.preview_delay_ms or 0,
+			snapshot = args.snapshot,
+			rollback = args.rollback,
+			preview = args.preview,
+			commit = args.commit,
+		},
+		active_entries = {},
+		query = args.query or "",
+		current_index = args.current_index or 1,
+		transaction = nil,
+		popup = nil,
+		promptbox = args.promptbox,
+		preview_generation = 0,
+		closed = false,
+		finished = false,
+	}
+
+	if not state.promptbox then
+		local prompt_screen = state.args.screen
+		if prompt_screen and prompt_screen.mypromptbox and prompt_screen.mypromptbox.widget then
+			state.promptbox = prompt_screen.mypromptbox.widget
+		else
+			state.promptbox = wibox.widget.textbox()
+		end
+	end
+
+	state.popup = build_popup({
+		title = state.args.title,
+		screen = state.args.screen,
+		on_cancel = function()
+			finish(state, "cancel")
+		end,
+	})
+	state.transaction = state.args.snapshot and state.args.snapshot(state.args) or nil
+
+	rebuild_active_entries(state)
+	if #state.active_entries == 0 then
+		state.current_index = 1
+	elseif state.current_index < 1 or state.current_index > #state.active_entries then
+		state.current_index = 1
+	end
+	preview_current(state)
+
+	awful.prompt.run({
+		prompt = (state.args.title or "") .. ": ",
+		textbox = state.promptbox,
+		hooks = {
+			{
+				{},
+				"space",
+				function(command)
+					return command
+				end,
+			},
+			{
+				{},
+				" ",
+				function(command)
+					return command
+				end,
+			},
+		},
+		changed_callback = function(input)
+			apply_query(state, input)
+		end,
+		keypressed_callback = function(mod, key)
+			for _, binding in ipairs(state.args.advance_keys) do
+				if binding_matches(mod, key, binding) then
+					step(state, binding.direction or 1)
+					return true
+				end
+			end
+
+			if key == "Up" or key == "Left" then
+				step(state, -1)
+				return true
+			end
+
+			if key == "Down" or key == "Right" then
+				step(state, 1)
+				return true
+			end
+
+			if key == "Escape" then
+				finish(state, "cancel")
+				return false
+			end
+
+			return false
+		end,
+		exe_callback = function()
+			finish(state, "commit")
+		end,
+		done_callback = function()
+			if not state.finished then
+				finish(state, "cancel")
+			end
+		end,
+	})
+
+	return state
 end
 
 return M
