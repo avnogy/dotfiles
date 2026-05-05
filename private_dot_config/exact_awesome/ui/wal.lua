@@ -1,5 +1,8 @@
+local gfs = require("gears.filesystem")
+
 local M = {}
 
+local wal_command = "/usr/local/bin/wal"
 local wal_cache_dir = (os.getenv("XDG_CACHE_HOME") or (os.getenv("HOME") .. "/.cache")) .. "/wal"
 local palette_cache_dir = wal_cache_dir .. "/awesome-palettes"
 local color_cache = {}
@@ -17,33 +20,6 @@ end
 
 local function shell_quote(value)
 	return "'" .. value:gsub("'", [['"'"']]) .. "'"
-end
-
-local function command(name)
-	local home = os.getenv("HOME")
-	local candidates = {
-		home and (home .. "/.local/bin/" .. name) or nil,
-		"/usr/local/bin/" .. name,
-		"/usr/bin/" .. name,
-		"/bin/" .. name,
-	}
-
-	for _, candidate in ipairs(candidates) do
-		local handle = candidate and io.open(candidate, "r") or nil
-		if handle then
-			handle:close()
-			return candidate
-		end
-	end
-
-	local handle = io.popen("command -v " .. name .. " 2>/dev/null")
-	if not handle then
-		return nil
-	end
-
-	local path = handle:read("*l")
-	handle:close()
-	return path and path ~= "" and path or nil
 end
 
 local function cache_file_path(path)
@@ -70,13 +46,28 @@ local function parse_colors(content)
 end
 
 function M.apply(wallpaper)
-	local wal = command("wal")
-
-	if not wal then
+	if not gfs.file_readable(wal_command) then
 		return false
 	end
 
-	local ok, _, code = os.execute(shell_quote(wal) .. " -q -n -i " .. shell_quote(wallpaper) .. " --saturate 0.1 --backend colorthief")
+	if not gfs.file_readable(wallpaper) then
+		return false
+	end
+
+	local command_line = table.concat({
+		shell_quote(wal_command),
+		"-q",
+		"-n",
+		"-i",
+		shell_quote(wallpaper),
+		"--saturate",
+		"0.1",
+		"--backend",
+		"colorthief",
+	}, " ")
+	local ok, _, code = os.execute(command_line)
+
+	color_cache[wallpaper] = nil
 
 	return ok == true or ok == 0 or code == 0
 end
