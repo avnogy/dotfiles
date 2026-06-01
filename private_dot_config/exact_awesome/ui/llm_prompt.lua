@@ -4,7 +4,7 @@ local naughty = require("naughty")
 local consts = require("consts")
 local M = {}
 
-local MODEL = "coder"
+local MODEL = "gemma4:e4b-it-q8_0"
 local response_file = gfs.get_cache_dir() .. "llm-response.md"
 
 local function trim(text)
