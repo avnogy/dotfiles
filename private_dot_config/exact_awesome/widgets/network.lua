@@ -65,7 +65,7 @@ local function update()
 end
 
 widget:buttons(gears.table.join(awful.button({}, 1, function()
-	awful.spawn(consts.terminal .. " -e impala")
+	awful.spawn(consts.terminal .. " -e bash -c 'impala'")
 end)))
 
 gears.timer({ timeout = 1, autostart = true, callback = update })
