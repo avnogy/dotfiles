@@ -10,4 +10,8 @@ hide_when_typing = true
 [window]
 padding = { x = 6, y = 3 }
 [font]
+{{- if eq .chezmoi.hostname "eclipse" }}
+size = 10
+{{- else }}
 size = 8
+{{- end }}
