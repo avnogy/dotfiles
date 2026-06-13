@@ -1,6 +1,6 @@
 local gears = require("gears")
 local awful = require("awful")
-local helpers = require("widgets.helpers")
+local helpers = require("helpers")
 local consts = require("consts")
 
 local widget = helpers.new_text_widget()

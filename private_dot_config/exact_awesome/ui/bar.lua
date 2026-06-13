@@ -4,7 +4,7 @@ local wibox = require("wibox")
 local beautiful = require("beautiful")
 
 local consts = require("consts")
-local helpers = require("widgets.helpers")
+local helpers = require("helpers")
 
 local mykeyboardlayout = helpers.new_text_widget(awful.widget.keyboardlayout())
 local battery_widget = require("widgets.battery")

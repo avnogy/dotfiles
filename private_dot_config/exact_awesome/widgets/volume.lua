@@ -3,7 +3,7 @@ local awful = require("awful")
 local naughty = require("naughty")
 
 local consts = require("consts")
-local helpers = require("widgets.helpers")
+local helpers = require("helpers")
 
 local widget = helpers.new_text_widget()
 local current_notification

@@ -7,7 +7,7 @@ local NOTIFICATION_TIMEOUT = 25
 local TIMEOUT = 10
 
 local global_last_warning
-local helpers = require("widgets.helpers")
+local helpers = require("helpers")
 local battery_text = helpers.new_text_widget()
 local battery_path = helpers.find_battery()
 
