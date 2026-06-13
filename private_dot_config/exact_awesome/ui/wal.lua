@@ -1,8 +1,8 @@
 local gfs = require("gears.filesystem")
-
+local naughty = require("naughty")
+local helpers = require("helpers")
 local M = {}
 
-local wal_command = "/usr/local/bin/wal"
 local wal_cache_dir = (os.getenv("XDG_CACHE_HOME") or (os.getenv("HOME") .. "/.cache")) .. "/wal"
 local palette_cache_dir = wal_cache_dir .. "/awesome-palettes"
 local color_cache = {}
@@ -46,6 +46,13 @@ local function parse_colors(content)
 end
 
 function M.apply(wallpaper)
+	local wal_command = helpers.find_executable("wal")
+		or naughty.notify({
+			title = "Theme application failed",
+			text = "wal executable not found",
+			urgency = "critical",
+			timeout = 5,
+		})
 	if not gfs.file_readable(wal_command) then
 		return false
 	end
