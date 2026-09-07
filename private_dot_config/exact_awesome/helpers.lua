@@ -148,13 +148,16 @@ function M.find_battery()
 end
 
 function M.find_executable(executable_name)
-	local handle = io.popen("type -P " .. executable_name)
+	local handle = io.popen("command -v " .. executable_name)
 	if not handle then
 		return nil
 	end
 	local path = handle:read("*l")
 	handle:close()
-	return path and string.gsub(path, "\n", "")
+	if not path or path == "" then
+		return nil
+	end
+	return path:gsub("\n", "")
 end
 
 return M
